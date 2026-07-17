@@ -10,6 +10,7 @@
  */
 import { db } from '../db/db';
 import { getMeta, setMeta } from '../db/meta';
+import { log } from '../util/log';
 import { health, submitRecord, uploadPhoto, refreshToken, type BackendConfig } from './api';
 
 const MAX_ATTEMPTS = 8;
@@ -132,6 +133,10 @@ async function doFlush(): Promise<FlushResult> {
         lastError: outcome.message,
         nextAttemptAtUtc: null,
       });
+      log.warn('sync', 'record rejected by backend (failedPermanent)', {
+        clientRecordId: record.clientRecordId,
+        error: outcome.message,
+      });
       result.recordsPermanent++;
     } else {
       // retryable (5xx/network) or still-401 after refresh
@@ -143,8 +148,16 @@ async function doFlush(): Promise<FlushResult> {
         lastError: outcome.kind === 'unauthorized' ? 'unauthorized (after refresh)' : outcome.message,
         nextAttemptAtUtc: permanent ? null : new Date(now + backoffDelayMs(attemptCount)).toISOString(),
       });
-      if (permanent) result.recordsPermanent++;
-      else result.recordsFailed++;
+      if (permanent) {
+        log.warn('sync', 'record exhausted retries (failedPermanent)', {
+          clientRecordId: record.clientRecordId,
+          attempts: attemptCount,
+          error: outcome.kind === 'unauthorized' ? 'unauthorized' : outcome.message,
+        });
+        result.recordsPermanent++;
+      } else {
+        result.recordsFailed++;
+      }
     }
   }
 
@@ -164,5 +177,8 @@ async function doFlush(): Promise<FlushResult> {
   }
 
   await setMeta('lastFlushAt', nowIso());
+  if (queue.length > 0 || result.photosUploaded > 0 || result.photosFailed > 0) {
+    log.info('sync', 'flush complete', { ...result });
+  }
   return result;
 }

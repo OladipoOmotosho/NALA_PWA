@@ -1,5 +1,6 @@
 /** QR/barcode scan (PRD §7.5): native BarcodeDetector where available, zxing fallback (iOS). */
 import { useEffect, useRef, useState } from 'react';
+import { log } from '../util/log';
 
 interface Props {
   onDetected: (value: string) => void;
@@ -48,6 +49,7 @@ export function Scanner({ onDetected, onClose }: Props) {
       await video.play().catch(() => undefined);
 
       const Detector = (globalThis as { BarcodeDetector?: BarcodeDetectorCtor }).BarcodeDetector;
+      log.info('scanner', Detector ? 'using native BarcodeDetector' : 'BarcodeDetector unavailable — using zxing fallback');
       if (Detector) {
         const detector = new Detector({ formats: ['qr_code', 'code_128', 'code_39', 'ean_13', 'data_matrix'] });
         const tick = async () => {

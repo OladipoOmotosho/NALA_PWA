@@ -1,11 +1,16 @@
 /** Storage durability + quota tracking (PRD §5, §9.2). */
+import { log } from '../util/log';
 
 export async function requestPersistentStorage(): Promise<boolean> {
   try {
     if (navigator.storage?.persisted && (await navigator.storage.persisted())) return true;
-    if (navigator.storage?.persist) return await navigator.storage.persist();
-  } catch {
-    // ignore — persistence is best-effort
+    if (navigator.storage?.persist) {
+      const granted = await navigator.storage.persist();
+      log.info('storage', granted ? 'persistent storage granted' : 'persistent storage denied (best-effort mode)');
+      return granted;
+    }
+  } catch (e) {
+    log.warn('storage', 'persistent storage request failed', { error: e instanceof Error ? e.message : String(e) });
   }
   return false;
 }
