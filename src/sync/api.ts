@@ -67,18 +67,33 @@ export async function submitRecord(cfg: BackendConfig, record: Submission): Prom
   }
 }
 
-export async function uploadPhoto(
-  cfg: BackendConfig,
-  clientRecordId: string,
-  photoId: string,
-  filename: string,
-  blob: Blob,
-): Promise<SubmitOutcome> {
+export interface PhotoUpload {
+  clientRecordId: string;
+  photoId: string;
+  filename: string;
+  blob: Blob;
+  /** Photo_Register metadata */
+  dateTakenUtc: string;
+  inspectorName: string;
+  photoDescription: string;
+  /** Derived from the linked inspection (register's Site / Asset ID / Parent Asset columns). */
+  siteCode: string;
+  assetTag: string;
+  parentAsset: string;
+}
+
+export async function uploadPhoto(cfg: BackendConfig, photo: PhotoUpload): Promise<SubmitOutcome> {
   try {
     const form = new FormData();
-    form.append('clientRecordId', clientRecordId);
-    form.append('photoId', photoId);
-    form.append('file', blob, filename);
+    form.append('clientRecordId', photo.clientRecordId);
+    form.append('photoId', photo.photoId);
+    form.append('dateTakenUtc', photo.dateTakenUtc);
+    form.append('inspectorName', photo.inspectorName);
+    form.append('photoDescription', photo.photoDescription);
+    form.append('siteCode', photo.siteCode);
+    form.append('assetTag', photo.assetTag);
+    form.append('parentAsset', photo.parentAsset);
+    form.append('file', photo.blob, photo.filename);
     const res = await fetch(`${cfg.backendUrl}/field-photo`, {
       method: 'POST',
       headers: headers(cfg),

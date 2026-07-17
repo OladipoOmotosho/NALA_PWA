@@ -1,7 +1,7 @@
 /** Photo capture section (PRD §7.7). Object URLs are owned by PhotoThumb and revoked on unmount. */
 import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { addPhoto, listPhotos, removePhoto, MAX_PHOTOS_PER_RECORD } from '../../util/photos';
+import { addPhoto, listPhotos, removePhoto, updatePhotoDescription, MAX_PHOTOS_PER_RECORD } from '../../util/photos';
 import type { PhotoRow } from '../../domain/types';
 
 function PhotoThumb({ photo, onRemove }: { photo: PhotoRow; onRemove: () => void }) {
@@ -18,6 +18,14 @@ function PhotoThumb({ photo, onRemove }: { photo: PhotoRow; onRemove: () => void
       <button type="button" className="photo-remove" aria-label="Remove photo" onClick={onRemove}>
         ×
       </button>
+      <input
+        type="text"
+        className="photo-desc"
+        placeholder="Description…"
+        aria-label="Photo description"
+        defaultValue={photo.photoDescription}
+        onBlur={(e) => void updatePhotoDescription(photo.photoId, e.target.value.trim())}
+      />
     </figure>
   );
 }

@@ -71,6 +71,9 @@ export interface Submission {
   riskRating: RiskLevel | ''; // derived
 }
 
+/** One row = one photo, mirroring the workbook Photo_Register: Date Taken,
+ * Inspector Name, Photo Description are captured here; Site / Asset ID /
+ * Parent Asset derive from the linked inspection at upload time. */
 export interface PhotoRow {
   photoId: string;
   clientRecordId: string;
@@ -78,6 +81,9 @@ export interface PhotoRow {
   filename: string;
   uploaded: boolean;
   byteSize: number;
+  dateTakenUtc: string;
+  inspectorName: string;
+  photoDescription: string;
 }
 
 export interface AssetRow {

@@ -189,6 +189,9 @@ describe('flushQueue', () => {
       filename: `${rec.clientRecordId}_1.jpg`,
       uploaded: false,
       byteSize: 1,
+      dateTakenUtc: '2026-07-17T10:00:00.000Z',
+      inspectorName: 'Dipo O.',
+      photoDescription: 'Corroded base plate',
     });
     handler = (url) => (url.includes('/field-photo') ? json(500) : json(200, { status: 'ok' }));
     const res = await flushQueue();
@@ -202,5 +205,15 @@ describe('flushQueue', () => {
     const res2 = await flushQueue();
     expect(res2.photosUploaded).toBe(1);
     expect((await db.photos.get('ph-1'))?.uploaded).toBe(true);
+
+    // the upload carried the full Photo_Register row: metadata + derived asset context
+    const uploads = calls.filter((c) => c.url.includes('/field-photo'));
+    const upload = uploads[uploads.length - 1];
+    const form = upload?.init?.body as FormData;
+    expect(form.get('photoId')).toBe('ph-1');
+    expect(form.get('dateTakenUtc')).toBe('2026-07-17T10:00:00.000Z');
+    expect(form.get('inspectorName')).toBe('Dipo O.');
+    expect(form.get('photoDescription')).toBe('Corroded base plate');
+    expect(form.get('assetTag')).toBe(rec.assetTag);
   });
 });

@@ -17,6 +17,18 @@ export class FieldDb extends Dexie {
       assets: 'assetTag, siteCode',
       meta: 'key',
     });
+    // v2: Photo_Register parity — backfill the new photo metadata fields on
+    // any rows captured before the upgrade (indexes unchanged).
+    this.version(2).upgrade((tx) =>
+      tx
+        .table('photos')
+        .toCollection()
+        .modify((p: Partial<PhotoRow>) => {
+          p.dateTakenUtc ??= new Date().toISOString();
+          p.inspectorName ??= '';
+          p.photoDescription ??= '';
+        }),
+    );
   }
 }
 

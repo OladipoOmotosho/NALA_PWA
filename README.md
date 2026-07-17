@@ -32,10 +32,10 @@ sync engine reports "backend URL not configured" and retries once configured.
 ## Backend contract (PRD §8) — what the n8n workflows must implement
 
 | Endpoint | Method | Behaviour |
-|---|---|---|
+| --- | --- | --- |
 | `{base}/health` | HEAD | 200 = reachable (connectivity heartbeat) |
 | `{base}/field-intake` | POST | JSON body; **dedupe on `Idempotency-Key` header = `clientRecordId` before the Excel append**; return 200 for accepted *and* already-exists |
-| `{base}/field-photo` | POST | multipart `clientRecordId, photoId, file`; idempotent on `photoId` |
+| `{base}/field-photo` | POST | multipart with the full Photo_Register row: `clientRecordId, photoId, dateTakenUtc, inspectorName, photoDescription, siteCode, assetTag, parentAsset, file`; **idempotent on `photoId` (upsert — a re-send updates the register row, e.g. an edited description)** |
 | `{base}/assets?siteCode=` | GET | JSON array of assets for the local cache (fields per `RemoteAsset` in `src/sync/api.ts`) |
 | `{base}/auth/refresh` | POST | `{ token, expiresAtUtc? }` |
 
