@@ -11,7 +11,14 @@ npm install
 npm run dev        # dev server (SW disabled in dev)
 npm run build      # typecheck + production build + service worker
 npm run preview    # serve the production build (test PWA/offline here)
+npm test           # Vitest unit suites (Dexie on fake-indexeddb, mocked backend)
+npm run lint       # ESLint (typescript-eslint + react-hooks)
+npm run typecheck  # tsc project references, no emit
 ```
+
+Conventions: see `.agent/` — `AGENT_RULES.md` (how work is run), `ENGINEERING_PRACTICES.md`
+(engineering bar), `CONTRIBUTING.md` (branches + Conventional Commits). Branch per task
+(`type/short-desc`), never commit to `main`, CI green before merge.
 
 Offline behaviour, install (A2HS), and Background Sync need the **production build over
 HTTPS** (or localhost). iOS requires the installed home-screen app for full behaviour.

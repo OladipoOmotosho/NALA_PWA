@@ -1,8 +1,8 @@
 /** Diagnostics / admin (PRD §7.12): queue states, retry, JSON export, storage, guarded purge. */
 import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../db/db';
-import { purgeSynced } from '../db/submissions';
+import { exportSnapshot, listQueue, purgeSynced, requeueFailed, storeCounts } from '../db/submissions';
+import { countAssets } from '../db/assets';
 import { storageInfo, formatBytes, type StorageInfo } from '../db/storage';
 import { getMeta } from '../db/meta';
 import { triggerFlush, syncAssets } from '../sync/engine';
@@ -20,47 +20,22 @@ export function DiagnosticsScreen() {
   };
   useEffect(refreshMeta, []);
 
-  const queue = useLiveQuery(
-    async () => {
-      const rows = await db.submissions.filter((r) => !r.isDeleted && r.syncStatus !== 'synced').toArray();
-      rows.sort((a, b) => a.submissionSequence - b.submissionSequence);
-      return rows;
-    },
-    [],
-    [],
-  );
+  const queue = useLiveQuery(listQueue, [], []);
   const counts = useLiveQuery(
-    async () => {
-      const all = await db.submissions.toArray();
-      const photos = await db.photos.toArray();
-      return {
-        total: all.filter((r) => !r.isDeleted).length,
-        synced: all.filter((r) => r.syncStatus === 'synced' && !r.isDeleted).length,
-        deleted: all.filter((r) => r.isDeleted).length,
-        photos: photos.length,
-        photosPending: photos.filter((p) => !p.uploaded).length,
-        assets: await db.assets.count(),
-      };
-    },
+    async () => ({ ...(await storeCounts()), assets: await countAssets() }),
     [],
     null,
   );
 
   const retryFailed = async () => {
-    await db.submissions
-      .where('syncStatus')
-      .anyOf('failed', 'failedPermanent')
-      .modify({ syncStatus: 'pending', attemptCount: 0, nextAttemptAtUtc: null });
+    await requeueFailed();
     const result = await triggerFlush();
     setMessage(result.ran ? `Flush ran: ${result.recordsSynced} synced, ${result.recordsFailed} retrying.` : `Flush skipped: ${result.reason}`);
     refreshMeta();
   };
 
   const exportJson = async () => {
-    const submissions = await db.submissions.toArray();
-    const photos = (await db.photos.toArray()).map(({ blob, ...rest }) => ({ ...rest, blobBytes: blob.size }));
-    const meta = (await db.meta.toArray()).filter((m) => m.key !== 'authToken');
-    const payload = JSON.stringify({ exportedAtUtc: new Date().toISOString(), submissions, photos, meta }, null, 2);
+    const payload = JSON.stringify(await exportSnapshot(), null, 2);
     const url = URL.createObjectURL(new Blob([payload], { type: 'application/json' }));
     const a = document.createElement('a');
     a.href = url;

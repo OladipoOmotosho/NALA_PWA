@@ -4,11 +4,10 @@
  * app launch, manual "Sync now", periodic foreground timer.
  */
 import { flushQueue, type FlushResult } from './flushCore';
-import { health } from './api';
+import { fetchAssets, health, type RemoteAsset } from './api';
 import { getMeta, setMeta } from '../db/meta';
 import { db } from '../db/db';
-import type { RemoteAsset } from './api';
-import { fetchAssets } from './api';
+import { log } from '../util/log';
 
 const PERIODIC_MS = 60_000;
 
@@ -49,14 +48,27 @@ export async function triggerFlush(): Promise<FlushResult> {
   }
 }
 
+let bgSyncPathLogged = false;
+
 async function registerBackgroundSync(): Promise<void> {
   try {
     const reg = await navigator.serviceWorker?.ready;
     // Background Sync API — Chromium only; iOS falls back to foreground flush.
     const sync = (reg as unknown as { sync?: { register(tag: string): Promise<void> } }).sync;
-    await sync?.register('flush-queue');
-  } catch {
-    // unsupported — foreground triggers cover it
+    if (sync) {
+      await sync.register('flush-queue');
+      if (!bgSyncPathLogged) log.info('sync', 'background sync registered (Chromium path)');
+    } else if (!bgSyncPathLogged) {
+      log.info('sync', 'Background Sync unsupported — using foreground-flush fallback (iOS path)');
+    }
+    bgSyncPathLogged = true;
+  } catch (e) {
+    if (!bgSyncPathLogged) {
+      log.warn('sync', 'background sync registration failed — foreground-flush fallback', {
+        error: e instanceof Error ? e.message : String(e),
+      });
+      bgSyncPathLogged = true;
+    }
   }
 }
 
@@ -121,5 +133,6 @@ export async function syncAssets(): Promise<{ ok: boolean; count: number }> {
     await db.assets.bulkPut(rows);
   });
   await setMeta('lastAssetSyncAt', new Date().toISOString());
+  log.info('assets', 'asset cache refreshed', { count: rows.length });
   return { ok: true, count: rows.length };
 }

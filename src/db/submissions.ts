@@ -135,6 +135,77 @@ export async function previousForAsset(assetTag: string): Promise<Submission | u
   return rows[0];
 }
 
+// ---- repository reads (screens use these instead of touching Dexie directly) ----
+
+export function getSubmission(clientRecordId: string): Promise<Submission | undefined> {
+  return db.submissions.get(clientRecordId);
+}
+
+export async function listActiveRecords(): Promise<Submission[]> {
+  const rows = await db.submissions.filter((r) => !r.isDeleted).toArray();
+  rows.sort((a, b) => b.capturedAtUtc.localeCompare(a.capturedAtUtc));
+  return rows;
+}
+
+/** Unsynced records in flush order, for the diagnostics queue view. */
+export async function listQueue(): Promise<Submission[]> {
+  const rows = await db.submissions.filter((r) => !r.isDeleted && r.syncStatus !== 'synced').toArray();
+  rows.sort((a, b) => a.submissionSequence - b.submissionSequence);
+  return rows;
+}
+
+export function countUnsynced(): Promise<number> {
+  return db.submissions
+    .where('syncStatus')
+    .anyOf('pending', 'syncing', 'failed')
+    .and((r) => !r.isDeleted)
+    .count();
+}
+
+export function countFailedPermanent(): Promise<number> {
+  return db.submissions
+    .where('syncStatus')
+    .equals('failedPermanent')
+    .and((r) => !r.isDeleted)
+    .count();
+}
+
+/** Diagnostics "retry failed": re-queue failed and failedPermanent records. */
+export async function requeueFailed(): Promise<number> {
+  return db.submissions
+    .where('syncStatus')
+    .anyOf('failed', 'failedPermanent')
+    .modify({ syncStatus: 'pending', attemptCount: 0, nextAttemptAtUtc: null });
+}
+
+export interface StoreCounts {
+  total: number;
+  synced: number;
+  deleted: number;
+  photos: number;
+  photosPending: number;
+}
+
+export async function storeCounts(): Promise<StoreCounts> {
+  const all = await db.submissions.toArray();
+  const photos = await db.photos.toArray();
+  return {
+    total: all.filter((r) => !r.isDeleted).length,
+    synced: all.filter((r) => r.syncStatus === 'synced' && !r.isDeleted).length,
+    deleted: all.filter((r) => r.isDeleted).length,
+    photos: photos.length,
+    photosPending: photos.filter((p) => !p.uploaded).length,
+  };
+}
+
+/** Full local dump for the diagnostics JSON export (photo blobs summarized, token excluded). */
+export async function exportSnapshot() {
+  const submissions = await db.submissions.toArray();
+  const photos = (await db.photos.toArray()).map(({ blob, ...rest }) => ({ ...rest, blobBytes: blob.size }));
+  const meta = (await db.meta.toArray()).filter((m) => m.key !== 'authToken');
+  return { exportedAtUtc: new Date().toISOString(), submissions, photos, meta };
+}
+
 /** Guarded purge for diagnostics: only synced records with all photos uploaded, older than N days. */
 export async function purgeSynced(olderThanDays: number): Promise<number> {
   const cutoff = new Date(Date.now() - olderThanDays * 86_400_000).toISOString();

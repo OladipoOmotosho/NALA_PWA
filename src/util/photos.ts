@@ -55,6 +55,10 @@ export async function addPhoto(clientRecordId: string, file: File): Promise<AddP
   return { ok: true, photoId, photoCount };
 }
 
+export function listPhotos(clientRecordId: string) {
+  return db.photos.where('clientRecordId').equals(clientRecordId).toArray();
+}
+
 export async function removePhoto(photoId: string): Promise<void> {
   await db.transaction('rw', db.photos, db.submissions, async () => {
     const photo = await db.photos.get(photoId);

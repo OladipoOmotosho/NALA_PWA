@@ -1,33 +1,15 @@
 /** Persistent sync status banner (PRD §7.11). */
 import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../db/db';
+import { countFailedPermanent, countUnsynced } from '../db/submissions';
 import { subscribeEngine, triggerFlush, type EngineState } from '../sync/engine';
 
 export function SyncBanner() {
   const [engine, setEngine] = useState<EngineState>({ online: navigator.onLine, flushing: false, lastResult: null });
   useEffect(() => subscribeEngine(setEngine), []);
 
-  const unsynced = useLiveQuery(
-    () =>
-      db.submissions
-        .where('syncStatus')
-        .anyOf('pending', 'syncing', 'failed')
-        .and((r) => !r.isDeleted)
-        .count(),
-    [],
-    0,
-  );
-  const permanent = useLiveQuery(
-    () =>
-      db.submissions
-        .where('syncStatus')
-        .equals('failedPermanent')
-        .and((r) => !r.isDeleted)
-        .count(),
-    [],
-    0,
-  );
+  const unsynced = useLiveQuery(countUnsynced, [], 0);
+  const permanent = useLiveQuery(countFailedPermanent, [], 0);
 
   const cls = engine.online ? 'banner online' : 'banner offline';
   return (

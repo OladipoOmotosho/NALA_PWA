@@ -1,8 +1,7 @@
 /** Local records list with per-record sync badges (PRD §7.11). */
 import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../db/db';
 import type { Submission, SyncStatus } from '../domain/types';
-import { discardSubmission } from '../db/submissions';
+import { discardSubmission, listActiveRecords } from '../db/submissions';
 
 const BADGE: Record<SyncStatus, string> = {
   draft: 'Draft',
@@ -19,15 +18,7 @@ interface Props {
 }
 
 export function RecordsScreen({ onEdit }: Props) {
-  const records = useLiveQuery(
-    async () => {
-      const rows = await db.submissions.filter((r) => !r.isDeleted).toArray();
-      rows.sort((a, b) => b.capturedAtUtc.localeCompare(a.capturedAtUtc));
-      return rows;
-    },
-    [],
-    [] as Submission[],
-  );
+  const records = useLiveQuery(listActiveRecords, [], [] as Submission[]);
 
   if (records.length === 0) {
     return <p className="muted center">No inspections on this device yet.</p>;
