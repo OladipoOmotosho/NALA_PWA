@@ -359,6 +359,12 @@ textarea:focus {
   color: #fff;
   font-size: 18px;
 }
+.photo-desc {
+  margin-top: 4px;
+  min-height: 40px;
+  font-size: 14px;
+  padding: 6px 8px;
+}
 
 /* scanner */
 .scanner-overlay {

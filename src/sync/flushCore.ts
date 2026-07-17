@@ -167,7 +167,18 @@ async function doFlush(): Promise<FlushResult> {
   for (const photo of pendingPhotos) {
     const parent = await db.submissions.get(photo.clientRecordId);
     if (!parent || parent.syncStatus !== 'synced') continue;
-    const outcome = await uploadPhoto(cfg, photo.clientRecordId, photo.photoId, photo.filename, photo.blob);
+    const outcome = await uploadPhoto(cfg, {
+      clientRecordId: photo.clientRecordId,
+      photoId: photo.photoId,
+      filename: photo.filename,
+      blob: photo.blob,
+      dateTakenUtc: photo.dateTakenUtc,
+      inspectorName: photo.inspectorName,
+      photoDescription: photo.photoDescription,
+      siteCode: parent.siteCode,
+      assetTag: parent.assetTag,
+      parentAsset: parent.parentAsset,
+    });
     if (outcome.kind === 'ok') {
       await db.photos.update(photo.photoId, { uploaded: true });
       result.photosUploaded++;
