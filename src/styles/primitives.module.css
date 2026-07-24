@@ -24,8 +24,14 @@
   @apply mb-[10px] text-[18px] text-teal;
 }
 
+/* margin-bottom only (not my-3): this doubles as a grid-2 cell, and a
+ * top margin here — but not on TextInput/Autocomplete's own wrapper,
+ * which carry none — pushes just this cell down within the row and
+ * throws off the side-by-side alignment. Adjoining margin-bottom already
+ * collapses against the next field's (absent) top margin in normal block
+ * flow, so standalone stacking spacing is unchanged. */
 .field {
-  @apply my-3 block;
+  @apply mb-3 block;
 }
 
 .fieldLabel {
