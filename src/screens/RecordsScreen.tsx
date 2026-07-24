@@ -1,17 +1,11 @@
 /** Local records list with per-record sync badges (PRD §7.11). */
+import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import type { Submission, SyncStatus } from '../domain/types';
+import type { Submission } from '../domain/types';
 import { discardSubmission, listActiveRecords } from '../db/submissions';
-
-const BADGE: Record<SyncStatus, string> = {
-  draft: 'Draft',
-  pending: 'Pending',
-  syncing: 'Syncing…',
-  synced: 'Synced',
-  failed: 'Retrying',
-  failedPermanent: 'Needs attention',
-  conflict: 'Conflict',
-};
+import { Button } from '../ui/Button';
+import { StatusBadge } from '../ui/StatusBadge';
+import { Modal } from '../ui/Modal';
 
 interface Props {
   onEdit: (clientRecordId: string) => void;
@@ -19,6 +13,7 @@ interface Props {
 
 export function RecordsScreen({ onEdit }: Props) {
   const records = useLiveQuery(listActiveRecords, [], [] as Submission[]);
+  const [discardTarget, setDiscardTarget] = useState<string | null>(null);
 
   if (records.length === 0) {
     return <p className="muted center">No inspections on this device yet.</p>;
@@ -30,7 +25,7 @@ export function RecordsScreen({ onEdit }: Props) {
         <div key={r.clientRecordId} className="record-card">
           <div className="record-head">
             <strong>{r.assetTag || '(no asset)'}</strong>
-            <span className={`badge badge-${r.syncStatus}`}>{BADGE[r.syncStatus]}</span>
+            <StatusBadge status={r.syncStatus} />
           </div>
           <div className="record-sub">
             {r.siteCode || 'Site —'} · {r.deficiencyCategory ? r.deficiencyCategory.split(' - ')[0] : 'no category'} ·{' '}
@@ -39,25 +34,34 @@ export function RecordsScreen({ onEdit }: Props) {
           </div>
           {r.lastError && r.syncStatus !== 'synced' && <div className="record-error">{r.lastError}</div>}
           <div className="record-actions">
-            <button type="button" className="btn btn-small" onClick={() => onEdit(r.clientRecordId)}>
+            <Button size="sm" onClick={() => onEdit(r.clientRecordId)}>
               {r.syncStatus === 'draft' ? 'Resume' : 'Edit'}
-            </button>
+            </Button>
             {r.syncStatus === 'draft' && (
-              <button
-                type="button"
-                className="btn btn-small btn-secondary"
-                onClick={() => {
-                  if (window.confirm('Discard this draft? It stays on the device (soft delete).')) {
-                    void discardSubmission(r.clientRecordId);
-                  }
-                }}
-              >
+              <Button size="sm" variant="secondary" onClick={() => setDiscardTarget(r.clientRecordId)}>
                 Discard
-              </button>
+              </Button>
             )}
           </div>
         </div>
       ))}
+
+      <Modal
+        isVisible={discardTarget !== null}
+        onClose={() => setDiscardTarget(null)}
+        variant="warning"
+        title="Discard this draft?"
+        message="It stays on the device (soft delete) but leaves the Records list."
+        primaryButton={{
+          text: 'Discard',
+          variant: 'danger',
+          onPress: () => {
+            if (discardTarget) void discardSubmission(discardTarget);
+            setDiscardTarget(null);
+          },
+        }}
+        secondaryButton={{ text: 'Cancel', onPress: () => setDiscardTarget(null) }}
+      />
     </div>
   );
 }

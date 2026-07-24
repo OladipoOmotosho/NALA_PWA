@@ -6,12 +6,18 @@ import { countAssets } from '../db/assets';
 import { storageInfo, formatBytes, type StorageInfo } from '../db/storage';
 import { getMeta } from '../db/meta';
 import { triggerFlush, syncAssets } from '../sync/engine';
+import { Button } from '../ui/Button';
+import { StatusBadge } from '../ui/StatusBadge';
+import { Modal } from '../ui/Modal';
+
+const PURGE_DAYS = 30;
 
 export function DiagnosticsScreen() {
   const [storage, setStorage] = useState<StorageInfo | null>(null);
   const [lastFlushAt, setLastFlushAt] = useState<string | null>(null);
   const [lastAssetSyncAt, setLastAssetSyncAt] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [showPurgeConfirm, setShowPurgeConfirm] = useState(false);
 
   const refreshMeta = () => {
     void storageInfo().then(setStorage);
@@ -45,9 +51,8 @@ export function DiagnosticsScreen() {
   };
 
   const purge = async () => {
-    const days = 30;
-    if (!window.confirm(`Purge synced records older than ${days} days (photos uploaded)? This cannot be undone.`)) return;
-    const n = await purgeSynced(days);
+    setShowPurgeConfirm(false);
+    const n = await purgeSynced(PURGE_DAYS);
     setMessage(`Purged ${n} fully-synced record(s).`);
   };
 
@@ -89,7 +94,7 @@ export function DiagnosticsScreen() {
         {queue.map((r) => (
           <div key={r.clientRecordId} className="queue-row">
             <span className="mono">#{r.submissionSequence}</span> <strong>{r.assetTag || '(no asset)'}</strong>{' '}
-            <span className={`badge badge-${r.syncStatus}`}>{r.syncStatus}</span>
+            <StatusBadge status={r.syncStatus} />
             <span className="muted"> attempts: {r.attemptCount}</span>
             {r.lastError && <div className="record-error">{r.lastError}</div>}
           </div>
@@ -99,21 +104,27 @@ export function DiagnosticsScreen() {
       <section className="card">
         <h2>Actions</h2>
         <div className="btn-col">
-          <button type="button" className="btn" onClick={() => void retryFailed()}>
-            Retry failed now
-          </button>
-          <button type="button" className="btn" onClick={() => void refreshAssets()}>
-            Refresh asset cache
-          </button>
-          <button type="button" className="btn btn-secondary" onClick={() => void exportJson()}>
+          <Button onClick={() => void retryFailed()}>Retry failed now</Button>
+          <Button onClick={() => void refreshAssets()}>Refresh asset cache</Button>
+          <Button variant="secondary" onClick={() => void exportJson()}>
             Export queue to JSON
-          </button>
-          <button type="button" className="btn btn-danger" onClick={() => void purge()}>
-            Purge synced &gt; 30 days
-          </button>
+          </Button>
+          <Button variant="danger" onClick={() => setShowPurgeConfirm(true)}>
+            Purge synced &gt; {PURGE_DAYS} days
+          </Button>
         </div>
         {message && <p className="toast">{message}</p>}
       </section>
+
+      <Modal
+        isVisible={showPurgeConfirm}
+        onClose={() => setShowPurgeConfirm(false)}
+        variant="warning"
+        title="Purge old synced records?"
+        message={`Records synced more than ${PURGE_DAYS} days ago, with all photos uploaded, will be permanently removed from this device. This cannot be undone.`}
+        primaryButton={{ text: 'Purge', variant: 'danger', onPress: () => void purge() }}
+        secondaryButton={{ text: 'Cancel', onPress: () => setShowPurgeConfirm(false) }}
+      />
     </div>
   );
 }

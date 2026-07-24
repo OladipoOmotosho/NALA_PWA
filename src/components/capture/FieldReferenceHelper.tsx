@@ -21,6 +21,7 @@ import {
   taxonomyLeaf,
 } from '../../domain/taxonomyQuery';
 import { Select } from '../fields';
+import { Button } from '../../ui/Button';
 
 export function FieldReferenceHelper() {
   const [open, setOpen] = useState(false);
@@ -33,9 +34,9 @@ export function FieldReferenceHelper() {
 
   return (
     <div className="field-reference">
-      <button type="button" className="btn btn-secondary btn-small" onClick={() => setOpen((v) => !v)}>
+      <Button variant="secondary" size="sm" onClick={() => setOpen((v) => !v)}>
         {open ? 'Hide' : 'Need help identifying this?'} Field Reference
-      </button>
+      </Button>
       {open && (
         <div className="field-reference-panel">
           <p className="field-hint">

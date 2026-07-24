@@ -5,6 +5,9 @@ import type { Submission } from '../../domain/types';
 import { SITES } from '../../domain/lookups';
 import { FORM_OPTIONS } from '../../domain/formOptions';
 import { Select } from '../fields';
+import { Button } from '../../ui/Button';
+import { TextInput } from '../../ui/TextInput';
+import { Autocomplete } from '../../ui/Autocomplete';
 import type { SetField } from './DetailSections';
 
 interface Props {
@@ -20,21 +23,17 @@ export function AssetSection({ form, set, onResolve, onScan, onCopyForward }: Pr
     <section className="card">
       <h2>Asset</h2>
       <div className="row">
-        <label className="field grow">
-          <span className="field-label">
-            Asset ID<span className="req"> *</span>
-          </span>
-          <input
-            type="text"
+        <div className="grow">
+          <TextInput
+            fieldLabel="Asset ID"
+            required
             value={form.assetTag}
             placeholder="Scan or type Asset ID"
-            onChange={(e) => set('assetTag', e.target.value)}
-            onBlur={(e) => onResolve(e.target.value)}
+            onChangeText={(v) => set('assetTag', v)}
+            onBlur={() => onResolve(form.assetTag)}
           />
-        </label>
-        <button type="button" className="btn" onClick={onScan}>
-          Scan
-        </button>
+        </div>
+        <Button onClick={onScan}>Scan</Button>
       </div>
       {form.assetUnresolved && form.assetTag && (
         <p className="warn">Asset not in the local cache — saved as manual entry, flagged for server resolution.</p>
@@ -49,21 +48,13 @@ export function AssetSection({ form, set, onResolve, onScan, onCopyForward }: Pr
         />
       </div>
       <div className="grid-2">
-        <label className="field">
-          <span className="field-label">Parent Asset</span>
-          <input
-            type="text"
-            value={form.parentAsset}
-            placeholder="e.g. Blower Building"
-            list="parent-asset-options"
-            onChange={(e) => set('parentAsset', e.target.value)}
-          />
-          <datalist id="parent-asset-options">
-            {FORM_OPTIONS.parentAssets.map((p) => (
-              <option key={p} value={p} />
-            ))}
-          </datalist>
-        </label>
+        <Autocomplete
+          fieldLabel="Parent Asset"
+          placeholder="e.g. Blower Building"
+          value={form.parentAsset}
+          onChangeText={(v) => set('parentAsset', v)}
+          suggestions={FORM_OPTIONS.parentAssets}
+        />
         <div className="field">
           <span className="field-label">Location</span>
           <div className="context-item">
@@ -74,9 +65,9 @@ export function AssetSection({ form, set, onResolve, onScan, onCopyForward }: Pr
         </div>
       </div>
       {form.assetTag && (
-        <button type="button" className="btn btn-secondary btn-small" onClick={onCopyForward}>
+        <Button variant="secondary" onClick={onCopyForward}>
           Copy from previous inspection
-        </button>
+        </Button>
       )}
     </section>
   );

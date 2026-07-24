@@ -16,7 +16,7 @@
  *
  * See internal-docs/technical-documentation/Autocomplete.md.
  */
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { colors, radius, transition, zIndex } from './theme';
 import { SearchIcon } from './icons';
@@ -24,7 +24,7 @@ import { SearchIcon } from './icons';
 export interface AutocompleteProps {
   value: string;
   onChangeText: (text: string) => void;
-  suggestions: string[];
+  suggestions: readonly string[];
   fieldLabel?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -38,6 +38,7 @@ export function Autocomplete({ value, onChangeText, suggestions, fieldLabel, pla
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const inputId = `autocomplete-${useId()}`;
 
   const filtered = useMemo(() => {
     const q = value.trim().toLowerCase();
@@ -95,11 +96,14 @@ export function Autocomplete({ value, onChangeText, suggestions, fieldLabel, pla
   return (
     <div ref={containerRef} style={{ width: '100%', position: 'relative' }}>
       {fieldLabel && (
-        <label style={{ display: 'block', fontSize: 14, color: colors.muted, marginBottom: 6 }}>{fieldLabel}</label>
+        <label htmlFor={inputId} style={{ display: 'block', fontSize: 14, color: colors.muted, marginBottom: 6 }}>
+          {fieldLabel}
+        </label>
       )}
       <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
         <SearchIcon size={14} color={colors.muted} style={{ position: 'absolute', left: 12 }} />
         <input
+          id={inputId}
           type="text"
           value={value}
           disabled={disabled}

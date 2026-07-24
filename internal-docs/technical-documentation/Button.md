@@ -31,6 +31,7 @@ markup scattered across screens.
 | Prop | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `variant` | `'primary' \| 'secondary' \| 'tertiary' \| 'danger'` | `'primary'` | Visual style. `danger` is new relative to the original three-variant set, added because `Modal`'s button configs need it (e.g. a destructive confirm). |
+| `size` | `'md' \| 'sm'` | `'md'` | `sm` (40px) drops below the 48px touch-target minimum — added during the app wiring for dense contexts (a per-record "Edit" in the Records list, the Sync Now button, secondary toggles like Field Reference). Reserve `md` for the primary action on any given screen. |
 | `loading` | `boolean` | `false` | Shows a spinner in place of the left icon; disables the button. |
 | `disabled` | `boolean` | `false` | |
 | `leftIcon` / `rightIcon` | `ReactNode` | — | Any icon element, e.g. from `ui/icons.tsx`. |

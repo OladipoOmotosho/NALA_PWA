@@ -27,6 +27,7 @@ import {
 } from '../components/capture/DetailSections';
 import { PhotoSection } from '../components/capture/PhotoSection';
 import { triggerFlush } from '../sync/engine';
+import { Button } from '../ui/Button';
 
 interface Props {
   /** Resume an existing draft/record; undefined = new capture. */
@@ -190,12 +191,12 @@ export function CaptureScreen({ editRecordId, onDone }: Props) {
       {toast && <div className="toast">{toast}</div>}
 
       <div className="actionbar">
-        <button type="button" className="btn btn-secondary" onClick={() => void persist('draft')}>
+        <Button variant="secondary" style={{ flex: 1 }} onClick={() => void persist('draft')}>
           Save draft
-        </button>
-        <button type="button" className="btn btn-primary" onClick={() => void persist('pending')}>
+        </Button>
+        <Button style={{ flex: 1 }} onClick={() => void persist('pending')}>
           Save &amp; queue
-        </button>
+        </Button>
       </div>
       {savedAt && <p className="muted center">Saved locally at {new Date(savedAt).toLocaleTimeString()}</p>}
     </div>
