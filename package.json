@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
     "lint": "eslint src",
+    "lint:css": "stylelint \"src/**/*.css\"",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -34,6 +35,8 @@
     "eslint-plugin-react-hooks": "5.2.0",
     "fake-indexeddb": "6.2.4",
     "jsdom": "25.0.1",
+    "stylelint": "17.14.1",
+    "stylelint-config-standard": "40.0.0",
     "typescript": "5.9.3",
     "typescript-eslint": "8.46.4",
     "vite": "5.4.21",

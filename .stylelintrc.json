@@ -1,0 +1,22 @@
+{
+  "ignoreFiles": ["src/components/redundant/**"],
+  "extends": "stylelint-config-standard",
+  "rules": {
+    "declaration-no-important": true
+  },
+  "overrides": [
+    {
+      "files": ["**/*.module.css"],
+      "rules": {
+        "selector-class-pattern": "^[a-z][a-zA-Z0-9]*$"
+      }
+    },
+    {
+      "comment": "src/styles.css is global scope, intentionally minimal (tokens + bare-element reset per styles.css's own header comment) — everything else must live in a co-located *.module.css. Zero class selectors enforces that boundary mechanically instead of by convention alone.",
+      "files": ["src/styles.css"],
+      "rules": {
+        "selector-max-class": 0
+      }
+    }
+  ]
+}
