@@ -7,14 +7,18 @@ Inspections sheet, its cascading dropdowns, and derived priority/risk logic).
 ## Run
 
 ```bash
-npm install
-npm run dev        # dev server (SW disabled in dev)
-npm run build      # typecheck + production build + service worker
-npm run preview    # serve the production build (test PWA/offline here)
-npm test           # Vitest unit suites (Dexie on fake-indexeddb, mocked backend)
-npm run lint       # ESLint (typescript-eslint + react-hooks)
-npm run typecheck  # tsc project references, no emit
+yarn install
+yarn dev        # dev server (SW disabled in dev)
+yarn build      # typecheck + production build + service worker
+yarn preview    # serve the production build (test PWA/offline here)
+yarn test       # Vitest unit suites (Dexie on fake-indexeddb, mocked backend)
+yarn lint       # ESLint (typescript-eslint + react-hooks)
+yarn typecheck  # tsc project references, no emit
 ```
+
+Package manager is **yarn** (classic, pinned via `packageManager` in `package.json`) —
+per `.agent/CONTRIBUTING.md`'s local-checks section. Don't run `npm install`; it will
+regenerate `package-lock.json` alongside `yarn.lock` and the two will drift.
 
 Conventions: see `.agent/` — `AGENT_RULES.md` (how work is run), `ENGINEERING_PRACTICES.md`
 (engineering bar), `CONTRIBUTING.md` (branches + Conventional Commits). Branch per task
