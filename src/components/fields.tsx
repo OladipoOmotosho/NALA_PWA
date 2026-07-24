@@ -45,6 +45,8 @@ export function Select({
   options,
   onChange,
   required,
+  disabled,
+  hint,
   placeholder = 'Select…',
 }: {
   label: string;
@@ -52,6 +54,8 @@ export function Select({
   options: string[];
   onChange: (v: string) => void;
   required?: boolean;
+  disabled?: boolean;
+  hint?: string;
   placeholder?: string;
 }) {
   return (
@@ -60,7 +64,7 @@ export function Select({
         {label}
         {required && <span className="req"> *</span>}
       </span>
-      <select value={value} onChange={(e) => onChange(e.target.value)}>
+      <select value={value} disabled={disabled} onChange={(e) => onChange(e.target.value)}>
         <option value="">{placeholder}</option>
         {options.map((o) => (
           <option key={o} value={o}>
@@ -68,6 +72,7 @@ export function Select({
           </option>
         ))}
       </select>
+      {hint && <span className="field-hint">{hint}</span>}
     </label>
   );
 }

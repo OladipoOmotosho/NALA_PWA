@@ -29,9 +29,12 @@ HTTPS** (or localhost). iOS requires the installed home-screen app for full beha
 
 ## Configure
 
-Open **⚙️ Setup** in the app: backend URL (n8n webhook base), bearer token, engineer
-email, inspector name. Without a backend URL the app still captures fully offline; the
-sync engine reports "backend URL not configured" and retries once configured.
+Open **📋 Records → ⚙️ Settings** in the app: backend URL (n8n webhook base), bearer
+token, engineer email, inspector name. Without a backend URL the app still captures fully
+offline; the sync engine reports "backend URL not configured" and retries once configured.
+
+The app has two screens: **➕ New Inspection** (capture) and **📋 Records** (record list,
+with Sync & diagnostics and Settings as collapsible sections).
 
 ## Backend contract (PRD §8) — what the n8n workflows must implement
 
@@ -57,12 +60,13 @@ their description/mechanism/focus-area cascades, 26 component types with sub-com
 python scripts/generate-lookups.py
 ```
 
-Derived logic (`src/domain/derive.ts`): Priority Description from Priority Rating;
-Risk Rank = severity × likelihood on a 3×3 matrix (High=3/Med=2/Low=1), Risk Rating
-High 6–9 / Medium 3–4 / Low 1–2. **Open question with Nerizon:** the workbook's Site
-Summary contains a Glencore 5×5 matrix (Consequence 1–5 × Likelihood A–E) that
-contradicts this — confirm before ship and adjust `derive.ts` + the two selects if the
-5×5 wins.
+Derived logic (`src/domain/riskMatrix.ts` + `derive.ts`): the **Glencore 5×5 matrix**
+(confirmed 2026-07-24, resolving the old 3×3-vs-5×5 open question). Consequence 1–5
+(Catastrophic→Negligible) × Likelihood A–E (Almost Certain→Rare) → Risk Rank 1–25 →
+Risk Rating (High 17–25 / Medium 7–16 / Low 1–6, matching the workbook Site Summary)
+→ **auto-assigned Priority Rating** (P1: 20–25 · P2: 15–19 · P3: 10–14 · P4: 5–9 ·
+P5: 1–4) → Priority Description. Priority is never hand-picked; P1 still forces
+Immediate Site Notification.
 
 ## Key design points
 

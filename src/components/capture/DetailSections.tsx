@@ -1,6 +1,7 @@
 /** Visit, Component, Deficiency, Risk & priority, and Actions sections (spec §4.2 layout). */
 import type { Submission } from '../../domain/types';
 import { COMPONENT_TYPES, DEFICIENCY_CATEGORIES, PRIORITIES, RISK_LEVELS } from '../../domain/lookups';
+import { CONSEQUENCE_LEVELS, LIKELIHOOD_LEVELS } from '../../domain/riskMatrix';
 import { Select, YesNo } from '../fields';
 import { FieldReferenceHelper } from './FieldReferenceHelper';
 
@@ -15,28 +16,32 @@ export function VisitSection({ form, set }: SectionProps) {
   return (
     <section className="card">
       <h2>Visit details</h2>
-      <label className="field">
-        <span className="field-label">
-          Inspection Date<span className="req"> *</span>
-        </span>
-        <input type="date" value={form.inspectionDate} onChange={(e) => set('inspectionDate', e.target.value)} />
-      </label>
-      <label className="field">
-        <span className="field-label">
-          Inspector Name<span className="req"> *</span>
-        </span>
-        <input type="text" value={form.inspectorName} onChange={(e) => set('inspectorName', e.target.value)} />
-      </label>
-      <YesNo label="PPE Requirements Met" value={form.ppeRequirementsMet} onChange={(v) => set('ppeRequirementsMet', v)} />
-      <label className="field">
-        <span className="field-label">Equipment Type</span>
-        <input
-          type="text"
-          value={form.equipmentType}
-          placeholder="Free text (workbook Yes/No validation was a template defect)"
-          onChange={(e) => set('equipmentType', e.target.value)}
-        />
-      </label>
+      <div className="grid-2">
+        <label className="field">
+          <span className="field-label">
+            Inspection Date<span className="req"> *</span>
+          </span>
+          <input type="date" value={form.inspectionDate} onChange={(e) => set('inspectionDate', e.target.value)} />
+        </label>
+        <label className="field">
+          <span className="field-label">
+            Inspector Name<span className="req"> *</span>
+          </span>
+          <input type="text" value={form.inspectorName} onChange={(e) => set('inspectorName', e.target.value)} />
+        </label>
+      </div>
+      <div className="grid-2">
+        <YesNo label="PPE Requirements Met" value={form.ppeRequirementsMet} onChange={(v) => set('ppeRequirementsMet', v)} />
+        <label className="field">
+          <span className="field-label">Equipment Type</span>
+          <input
+            type="text"
+            value={form.equipmentType}
+            placeholder="Free text"
+            onChange={(e) => set('equipmentType', e.target.value)}
+          />
+        </label>
+      </div>
     </section>
   );
 }
@@ -46,24 +51,26 @@ export function ComponentSection({ form, set }: SectionProps) {
   return (
     <section className="card">
       <h2>Component</h2>
-      <Select
-        label="Component Type"
-        required
-        value={form.componentType}
-        options={COMPONENT_TYPES.map((c) => c.name)}
-        onChange={(v) => {
-          // changing the parent clears the dependent (spec §4.3)
-          set('componentType', v);
-          set('subComponent', '');
-        }}
-      />
-      <Select
-        label="Sub-Component"
-        value={form.subComponent}
-        options={componentType?.subComponents ?? []}
-        onChange={(v) => set('subComponent', v)}
-        placeholder={componentType && componentType.subComponents.length === 0 ? 'None defined for this type' : 'Select…'}
-      />
+      <div className="grid-2">
+        <Select
+          label="Component Type"
+          required
+          value={form.componentType}
+          options={COMPONENT_TYPES.map((c) => c.name)}
+          onChange={(v) => {
+            // changing the parent clears the dependent (spec §4.3)
+            set('componentType', v);
+            set('subComponent', '');
+          }}
+        />
+        <Select
+          label="Sub-Component"
+          value={form.subComponent}
+          options={componentType?.subComponents ?? []}
+          onChange={(v) => set('subComponent', v)}
+          placeholder={componentType && componentType.subComponents.length === 0 ? 'None defined' : 'Select…'}
+        />
+      </div>
     </section>
   );
 }
@@ -95,8 +102,10 @@ export function DeficiencySection({ form, set }: SectionProps) {
         options={category?.descriptions ?? []}
         onChange={(v) => set('detailedDescription', v)}
       />
-      <Select label="Mechanism" value={form.mechanism} options={category?.mechanisms ?? []} onChange={(v) => set('mechanism', v)} />
-      <Select label="Focus Area" value={form.focusArea} options={category?.focusAreas ?? []} onChange={(v) => set('focusArea', v)} />
+      <div className="grid-2">
+        <Select label="Mechanism" value={form.mechanism} options={category?.mechanisms ?? []} onChange={(v) => set('mechanism', v)} />
+        <Select label="Focus Area" value={form.focusArea} options={category?.focusAreas ?? []} onChange={(v) => set('focusArea', v)} />
+      </div>
       <YesNo label="Vibration Present" value={form.vibrationPresent} onChange={(v) => set('vibrationPresent', v)} />
       <FieldReferenceHelper />
     </section>
@@ -107,42 +116,46 @@ export function RiskPrioritySection({ form, derived, set }: SectionProps & { der
   return (
     <section className="card">
       <h2>Risk &amp; priority</h2>
-      <Select
-        label="Consequence Severity"
-        required
-        value={form.consequenceSeverity}
-        options={[...RISK_LEVELS]}
-        onChange={(v) => set('consequenceSeverity', v as Submission['consequenceSeverity'])}
-      />
+      <div className="grid-2">
+        <Select
+          label="Consequence Severity"
+          required
+          value={form.consequenceSeverity}
+          options={[...CONSEQUENCE_LEVELS]}
+          onChange={(v) => set('consequenceSeverity', v as Submission['consequenceSeverity'])}
+        />
+        <Select
+          label="Likelihood"
+          required
+          value={form.likelihood}
+          options={[...LIKELIHOOD_LEVELS]}
+          onChange={(v) => set('likelihood', v as Submission['likelihood'])}
+        />
+      </div>
       <Select
         label="Most-Affected Consequence"
         value={form.mostAffectedConsequence}
         options={[...RISK_LEVELS]}
         onChange={(v) => set('mostAffectedConsequence', v as Submission['mostAffectedConsequence'])}
       />
-      <Select
-        label="Likelihood"
-        required
-        value={form.likelihood}
-        options={[...RISK_LEVELS]}
-        onChange={(v) => set('likelihood', v as Submission['likelihood'])}
-      />
       <div className="context-grid">
         <div className="context-item">
-          <span className="context-label">Risk Rank (derived)</span>
+          <span className="context-label">Risk Rank (matrix)</span>
           <span className="context-value">{derived.riskRank ?? '—'}</span>
         </div>
         <div className="context-item">
-          <span className="context-label">Risk Rating (derived)</span>
+          <span className="context-label">Risk Rating</span>
           <span className="context-value">{derived.riskRating || '—'}</span>
         </div>
       </div>
       <Select
         label="Priority Rating"
-        required
-        value={form.priorityRating}
+        disabled
+        value={derived.priorityRating}
         options={[...PRIORITIES]}
-        onChange={(v) => set('priorityRating', v as Submission['priorityRating'])}
+        onChange={() => undefined}
+        placeholder="Auto-assigned"
+        hint="Assigned by the Glencore matrix from Consequence × Likelihood (P1: 20–25 · P2: 15–19 · P3: 10–14 · P4: 5–9 · P5: 1–4)."
       />
       <div className="context-item">
         <span className="context-label">Priority Description (derived)</span>
@@ -167,12 +180,14 @@ export function ActionsSection({ form, derived, set }: SectionProps & { derived:
         disabled={derived.priorityRating === 'P1'}
         hint={derived.priorityRating === 'P1' ? 'Forced to Yes for P1.' : undefined}
       />
-      <YesNo
-        label="Further Investigation Required"
-        value={form.furtherInvestigationRequired}
-        onChange={(v) => set('furtherInvestigationRequired', v)}
-      />
-      <YesNo label="NDT Required" value={form.ndtRequired} onChange={(v) => set('ndtRequired', v)} />
+      <div className="grid-2">
+        <YesNo
+          label="Further Investigation Required"
+          value={form.furtherInvestigationRequired}
+          onChange={(v) => set('furtherInvestigationRequired', v)}
+        />
+        <YesNo label="NDT Required" value={form.ndtRequired} onChange={(v) => set('ndtRequired', v)} />
+      </div>
     </section>
   );
 }

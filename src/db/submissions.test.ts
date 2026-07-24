@@ -12,9 +12,8 @@ async function makeValid(): Promise<Submission> {
     componentType: 'Roofing',
     deficiencyCategory: 'CML - Corrosion & Material Loss',
     detailedDescription: 'Corrosion of steel deck',
-    consequenceSeverity: 'High',
-    likelihood: 'Medium',
-    priorityRating: 'P2',
+    consequenceSeverity: '3 - Moderate',
+    likelihood: 'C - Possible',
   };
 }
 
@@ -30,7 +29,10 @@ describe('validateForSubmit', () => {
     expect(missing).toContain('Asset ID');
     expect(missing).toContain('Component Type');
     expect(missing).toContain('Deficiency Category');
-    expect(missing).toContain('Priority Rating');
+    expect(missing).toContain('Consequence Severity');
+    expect(missing).toContain('Likelihood');
+    // Priority Rating is matrix-assigned now — not a user input, so never "missing"
+    expect(missing).not.toContain('Priority Rating');
   });
 
   it('passes a fully filled record', async () => {
@@ -38,20 +40,33 @@ describe('validateForSubmit', () => {
   });
 });
 
-describe('applyDerived', () => {
-  it('derives priority description and risk rank/rating', async () => {
-    const s = await makeValid();
+describe('applyDerived (Glencore matrix)', () => {
+  it('derives rank, rating, priority and its description from consequence × likelihood', async () => {
+    const s = await makeValid(); // 3 - Moderate × C - Possible
     const d = applyDerived(s);
-    expect(d.priorityDescription).toBe('Poor Condition - Repair actions needed within 12 months');
-    expect(d.riskRank).toBe(6); // High(3) × Medium(2)
-    expect(d.riskRating).toBe('High');
+    expect(d.riskRank).toBe(13);
+    expect(d.riskRating).toBe('Medium'); // 7–16
+    expect(d.priorityRating).toBe('P3'); // 10–14
+    expect(d.priorityDescription).toBe('Bad Condition - Repairs needed within 24 to 36 months');
   });
 
-  it('forces Immediate Site Notification = Yes for P1 (spec §4.3)', async () => {
+  it('a matrix-assigned P1 forces Immediate Site Notification = Yes (spec §4.3)', async () => {
     const s = await makeValid();
-    s.priorityRating = 'P1';
+    s.consequenceSeverity = '5 - Catastrophic';
+    s.likelihood = 'A - Almost Certain'; // rank 25 → P1
     s.immediateSiteNotification = false;
-    expect(applyDerived(s).immediateSiteNotification).toBe(true);
+    const d = applyDerived(s);
+    expect(d.priorityRating).toBe('P1');
+    expect(d.immediateSiteNotification).toBe(true);
+  });
+
+  it('clears priority when the inputs are incomplete', async () => {
+    const s = await makeValid();
+    s.likelihood = '';
+    const d = applyDerived(s);
+    expect(d.riskRank).toBeNull();
+    expect(d.priorityRating).toBe('');
+    expect(d.priorityDescription).toBe('');
   });
 });
 

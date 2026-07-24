@@ -143,6 +143,14 @@ textarea:focus {
   flex: 1;
 }
 
+/* compact two-column field rows — short fields don't need full width */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10px;
+  align-items: start;
+}
+
 /* grey context (read-only) block — the workbook's grey columns */
 .context-grid {
   display: grid;
@@ -415,6 +423,39 @@ textarea:focus {
 .scanner-close {
   position: absolute;
   bottom: calc(24px + env(safe-area-inset-bottom));
+}
+
+/* records hub collapsibles */
+.collapse {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  margin: 12px 0;
+}
+.collapse > summary {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+.collapse > summary::-webkit-details-marker {
+  display: none;
+}
+.collapse > summary::after {
+  content: '▸';
+  margin-left: auto;
+  color: var(--muted);
+  transition: transform 0.15s;
+}
+.collapse[open] > summary::after {
+  transform: rotate(90deg);
+}
+.collapse > :not(summary) {
+  padding: 0 8px 8px;
 }
 
 /* update prompt */
