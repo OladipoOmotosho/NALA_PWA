@@ -1,0 +1,8 @@
+.parentContainer {
+  overflow-y: scroll;
+  /* padding-bottom: 100px !important; */
+}
+
+.parentContainer::-webkit-scrollbar {
+  display: none;
+}
