@@ -1,31 +1,27 @@
+@reference '#styles.css';
+
 .badge {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 999px;
-  white-space: nowrap;
-  color: var(--text);
+  @apply inline-block whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold text-text;
 }
 
 .draft {
-  background: #334155;
+  @apply bg-[#334155];
 }
 
 .pending,
 .syncing {
-  background: #92400e;
+  @apply bg-[#92400e];
 }
 
 .synced {
-  background: #065f46;
+  @apply bg-[#065f46];
 }
 
 .failed {
-  background: #9a3412;
+  @apply bg-[#9a3412];
 }
 
 .failedPermanent,
 .conflict {
-  background: #7f1d1d;
+  @apply bg-[#7f1d1d];
 }

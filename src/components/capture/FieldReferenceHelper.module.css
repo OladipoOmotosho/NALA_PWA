@@ -1,11 +1,9 @@
+@reference '#styles.css';
+
 .wrapper {
-  margin-top: 12px;
+  @apply mt-3;
 }
 
 .panel {
-  margin-top: 10px;
-  padding: 12px;
-  border-radius: 10px;
-  background: #1a2438;
-  border: 1px dashed var(--line);
+  @apply mt-2.5 rounded-md border border-dashed border-line bg-[#1a2438] p-3;
 }

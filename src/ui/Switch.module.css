@@ -1,38 +1,21 @@
+@reference '#styles.css';
+
 .track {
-  position: relative;
-  width: 48px;
-  height: 28px;
-  min-height: 28px;
-  border-radius: 14px;
-  border: none;
-  background: var(--line);
-  cursor: pointer;
-  padding: 0;
-  flex-shrink: 0;
-  transition: background 150ms ease;
+  @apply relative h-7 w-12 min-h-7 shrink-0 cursor-pointer rounded-xl border-none bg-line p-0 transition-colors duration-150 ease-[ease];
 }
 
 .track.checked {
-  background: var(--teal);
+  @apply bg-teal;
 }
 
 .track:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
+  @apply cursor-not-allowed opacity-50;
 }
 
 .thumb {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 1px 3px rgb(0 0 0 / 30%);
-  transition: left 150ms ease;
+  @apply absolute left-[3px] top-[3px] size-5.5 rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.3)] transition-[left] duration-150 ease-[ease];
 }
 
 .thumb.checked {
-  left: 23px;
+  @apply left-[23px];
 }

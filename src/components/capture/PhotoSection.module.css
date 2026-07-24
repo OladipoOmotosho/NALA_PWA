@@ -1,31 +1,17 @@
+@reference '#styles.css';
+
 .grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-top: 12px;
+  @apply mt-3 grid grid-cols-3 gap-2;
 }
 
 .thumb {
-  position: relative;
-  margin: 0;
+  @apply relative m-0;
 }
 
 .thumb img {
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  border-radius: 10px;
+  @apply aspect-square w-full rounded-md object-cover;
 }
 
 .remove {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: none;
-  background: rgb(0 0 0 / 70%);
-  color: #fff;
-  font-size: 18px;
+  @apply absolute right-1 top-1 size-8 rounded-full border-none bg-black/70 text-lg text-white;
 }

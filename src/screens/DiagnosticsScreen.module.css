@@ -1,10 +1,9 @@
+@reference '#styles.css';
+
 .queueRow {
-  padding: 8px 0;
-  border-bottom: 1px solid var(--line);
-  font-size: 15px;
+  @apply border-b border-line py-2 text-[15px];
 }
 
 .mono {
-  font-family: ui-monospace, monospace;
-  color: var(--muted);
+  @apply font-mono text-muted;
 }

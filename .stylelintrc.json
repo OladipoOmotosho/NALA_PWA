@@ -2,7 +2,10 @@
   "ignoreFiles": ["src/components/redundant/**"],
   "extends": "stylelint-config-standard",
   "rules": {
-    "declaration-no-important": true
+    "declaration-no-important": true,
+    "at-rule-no-unknown": [true, { "ignoreAtRules": ["theme", "apply", "tailwind", "layer", "custom-variant", "utility", "source", "reference"] }],
+    "at-rule-no-deprecated": [true, { "ignoreAtRules": ["apply"] }],
+    "import-notation": "string"
   },
   "overrides": [
     {

@@ -1,26 +1,17 @@
+@reference '#styles.css';
+
 .card {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 12px 14px;
-  margin: 10px 0;
+  @apply my-2.5 rounded-xl border border-line bg-card px-3.5 py-3;
 }
 
 .head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
+  @apply flex items-center justify-between gap-2;
 }
 
 .sub {
-  color: var(--muted);
-  font-size: 14px;
-  margin-top: 4px;
+  @apply mt-1 text-sm text-muted;
 }
 
 .actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
+  @apply mt-2.5 flex gap-2;
 }

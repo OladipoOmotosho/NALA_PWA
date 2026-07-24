@@ -6,9 +6,13 @@
  * apply app-wide regardless of which component renders them.
  *
  * Everything else — every screen and every ui/ component's own look — lives
- * in its own co-located *.module.css file. Shared layout atoms used by 2+
- * components live in src/styles/primitives.module.css, not here.
+ * in its own co-located *.module.css file, written with Tailwind's @apply
+ * against the theme mapping below (2026-07-24: Tailwind + CSS Modules).
+ * Shared layout atoms used by 2+ components live in
+ * src/styles/primitives.module.css, not here.
  */
+@import 'tailwindcss';
+
 :root {
   --bg: #0b1220;
   --card: #121c30;
@@ -24,8 +28,54 @@
   --overlay: rgb(0 0 0 / 60%);
 }
 
+/**
+ * Maps this app's own design tokens into Tailwind's theme so every
+ * Component.module.css's @apply calls (bg-teal, text-muted, rounded-lg, ...)
+ * are backed by the same single source of truth as the :root custom
+ * properties above — not Tailwind's stock palette/scale. `inline` is
+ * required whenever a theme value is itself a var(...) reference (see
+ * https://tailwindcss.com/docs/theme#referencing-other-variables).
+ *
+ * Radius intentionally overrides Tailwind's default --radius-* scale
+ * outright (not just extends it) so rounded-sm/md/lg/xl mean exactly what
+ * they already meant everywhere in this app pre-Tailwind.
+ */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-card: var(--card);
+  --color-line: var(--line);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-teal: var(--teal);
+  --color-teal-dark: var(--teal-dark);
+  --color-red: var(--red);
+  --color-amber: var(--amber);
+  --color-green: var(--green);
+  --color-input-bg: var(--input-bg);
+  --color-overlay: var(--overlay);
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-full: 999px;
+}
+
 * {
   box-sizing: border-box;
+}
+
+/* Tailwind's Preflight (@layer base, loaded via the @import above) zeroes
+ * every element's default margin, including bare <p>. Most paragraphs in
+ * this app already carry their own spacing via a *.module.css class
+ * (.fieldHint, .toast, ...); this restores stacked-paragraph rhythm for the
+ * ones that don't (e.g. DiagnosticsScreen's Storage section) without
+ * reaching for a class on every single one. */
+p {
+  margin-top: 8px;
+}
+
+p:first-child {
+  margin-top: 0;
 }
 
 html,

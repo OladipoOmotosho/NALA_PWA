@@ -1,99 +1,69 @@
+@reference '#styles.css';
+
 .container {
-  width: 100%;
+  @apply w-full;
 }
 
 .labelRow {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 6px;
+  @apply mb-1.5 flex items-center gap-1;
 }
 
 .label {
-  font-size: 14px;
-  color: var(--muted);
+  @apply text-sm text-muted;
 }
 
 .label.error {
-  color: var(--red);
+  @apply text-red;
 }
 
 .wrapper {
-  display: flex;
-  align-items: center;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--input-bg);
-  transition: border-color 120ms ease;
+  @apply flex items-center rounded-md border border-line bg-input-bg transition-colors duration-120 ease-[ease];
 }
 
 .wrapper.multiline {
-  align-items: flex-start;
+  @apply items-start;
 }
 
 .wrapper.focused {
-  border-color: var(--teal);
+  @apply border-teal;
 }
 
 .wrapper.error {
-  border-color: var(--red);
+  @apply border-red;
 }
 
 .wrapper.disabled {
-  background: var(--card);
-  opacity: 0.6;
+  @apply bg-card opacity-60;
 }
 
 .prefix {
-  padding: 0 10px;
-  border-right: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 15px;
+  @apply border-r border-line px-2.5 text-[15px] text-muted;
 }
 
 .suffix {
-  padding: 0 10px;
-  color: var(--muted);
-  font-size: 12px;
+  @apply px-2.5 text-xs text-muted;
 }
 
 .input {
-  flex: 1;
-  min-height: 48px;
-  padding: 10px 12px;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: var(--text);
-  font-size: 16px;
-  width: 100%;
+  @apply w-full min-h-12 flex-1 border-none bg-transparent px-3 py-2.5 text-base text-text outline-none;
 }
 
 .input.multiline {
-  min-height: 96px;
-  resize: vertical;
+  @apply min-h-24 resize-y;
 }
 
 .input.disabled {
-  color: var(--muted);
+  @apply text-muted;
 }
 
 .toggleButton {
-  background: none;
-  border: none;
-  color: var(--muted);
-  padding: 0 12px;
-  cursor: pointer;
+  @apply cursor-pointer border-none bg-transparent px-3 text-muted;
 }
 
 .iconWrapper {
-  padding: 0 12px;
-  display: flex;
-  align-items: center;
+  @apply flex items-center px-3;
 }
 
 .errorText {
-  color: var(--red);
-  font-size: 12px;
-  margin-top: 4px;
+  @apply mt-1 text-xs text-red;
 }

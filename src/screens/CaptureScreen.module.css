@@ -1,25 +1,17 @@
+@reference '#styles.css';
+
 .p1Banner {
-  background: var(--red);
-  color: #fff;
-  font-weight: 700;
-  padding: 12px 14px;
-  border-radius: 12px;
-  margin: 12px 0;
+  @apply my-3 rounded-lg bg-red px-3.5 py-3 font-bold text-white;
 }
 
 .validationBox {
-  background: #7c2d12;
-  border-radius: 12px;
-  padding: 12px 14px;
-  margin: 12px 0;
+  @apply my-3 rounded-lg bg-[#7c2d12] px-3.5 py-3;
 }
 
 .actionbar {
-  display: flex;
-  gap: 10px;
-  margin: 16px 0;
+  @apply my-4 flex gap-2.5;
 }
 
 .actionbar > * {
-  flex: 1;
+  @apply flex-1;
 }

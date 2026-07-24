@@ -1,67 +1,41 @@
+@reference '#styles.css';
+
 .container {
-  width: 100%;
-  position: relative;
+  @apply relative w-full;
 }
 
 .label {
-  display: block;
-  font-size: 14px;
-  color: var(--muted);
-  margin-bottom: 6px;
+  @apply mb-1.5 block text-sm text-muted;
 }
 
 .inputRow {
-  position: relative;
-  display: flex;
-  align-items: center;
+  @apply relative flex items-center;
 }
 
 .searchIcon {
-  position: absolute;
-  left: 12px;
+  @apply absolute left-3;
 }
 
 .input {
-  width: 100%;
-  min-height: 48px;
-  padding: 10px 12px 10px 34px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: #0e1626;
-  color: var(--text);
-  font-size: 15px;
-  outline: none;
-  transition: border-color 120ms ease;
+  @apply w-full min-h-12 rounded-md border border-line bg-input-bg py-2.5 pl-8.5 pr-3 text-[15px] text-text outline-none transition-colors duration-120 ease-[ease];
 }
 
 .input:focus-visible {
-  border-color: var(--teal);
-  outline: 2px solid var(--teal);
-  outline-offset: 1px;
+  @apply border-teal outline-2 outline-teal outline-offset-1;
 }
 
 .inputDisabled {
-  background: var(--card);
+  @apply bg-card;
 }
 
 .dropdown {
-  max-height: 240px;
-  overflow-y: auto;
-  background: #0e1626;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgb(0 0 0 / 35%);
-  z-index: 60;
+  @apply z-60 max-h-60 overflow-y-auto rounded-lg border border-line bg-input-bg shadow-[0_8px_32px_rgba(0,0,0,0.35)];
 }
 
 .option {
-  padding: 10px 12px;
-  font-size: 14px;
-  cursor: pointer;
-  background: transparent;
-  color: var(--text);
+  @apply cursor-pointer bg-transparent px-3 py-2.5 text-sm text-text;
 }
 
 .optionHovered {
-  background: rgb(20 184 166 / 10%);
+  @apply bg-teal/10;
 }

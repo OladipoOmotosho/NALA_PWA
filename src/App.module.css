@@ -1,39 +1,21 @@
+@reference '#styles.css';
+
 .app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
+  @apply flex min-h-dvh flex-col;
 }
 
 .content {
-  flex: 1;
-  padding: 12px 12px 96px;
-  max-width: 640px;
-  width: 100%;
-  margin: 0 auto;
+  @apply mx-auto w-full max-w-160 flex-1 px-3 pt-3 pb-24;
 }
 
 .tabbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 30;
-  display: flex;
-  background: var(--card);
-  border-top: 1px solid var(--line);
-  padding-bottom: env(safe-area-inset-bottom);
+  @apply fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-card pb-[env(safe-area-inset-bottom)];
 }
 
 .tab {
-  flex: 1;
-  min-height: 56px;
-  border: none;
-  background: transparent;
-  color: var(--muted);
-  font-size: 14px;
+  @apply min-h-14 flex-1 border-none bg-transparent text-sm text-muted;
 }
 
 .tabActive {
-  color: var(--teal);
-  font-weight: 700;
+  @apply font-bold text-teal;
 }

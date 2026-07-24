@@ -1,95 +1,62 @@
+@reference '#styles.css';
+
 .overlay {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  background: var(--overlay);
-  z-index: 100;
-  opacity: 0;
-  transition: opacity 150ms ease;
+  @apply fixed inset-0 z-100 flex items-center justify-center bg-overlay p-4 opacity-0 transition-opacity duration-150 ease-[ease];
 }
 
 .overlayEntered {
-  opacity: 1;
+  @apply opacity-100;
 }
 
 .dialog {
-  position: relative;
-  width: 100%;
-  max-height: 90vh;
-  overflow: auto;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transform: scale(0.96);
-  transition: transform 150ms ease;
+  @apply relative flex w-full max-h-[90vh] scale-96 flex-col gap-3 overflow-auto rounded-xl border border-line bg-card p-6 transition-transform duration-150 ease-[ease];
 }
 
 .dialogEntered {
-  transform: scale(1);
+  @apply scale-100;
 }
 
 .sizeSm {
-  max-width: 360px;
+  @apply max-w-90;
 }
 
 .sizeMd {
-  max-width: 480px;
+  @apply max-w-120;
 }
 
 .sizeLg {
-  max-width: 640px;
+  @apply max-w-160;
 }
 
 .closeButton {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: none;
-  border: none;
-  color: var(--muted);
-  cursor: pointer;
+  @apply absolute right-3 top-3 cursor-pointer border-none bg-transparent text-muted;
 }
 
 .iconWrap {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @apply flex size-12 items-center justify-center rounded-full;
 }
 
 .iconSuccess {
-  background: var(--teal);
+  @apply bg-teal;
 }
 
 .iconError {
-  background: var(--red);
+  @apply bg-red;
 }
 
 .iconWarning,
 .iconConfirmation {
-  background: var(--amber);
+  @apply bg-amber;
 }
 
 .iconInfo {
-  background: var(--muted);
+  @apply bg-muted;
 }
 
 .iconCustom {
-  background: var(--card);
+  @apply bg-card;
 }
 
 .footer {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-top: 8px;
+  @apply mt-2 flex justify-end gap-2;
 }

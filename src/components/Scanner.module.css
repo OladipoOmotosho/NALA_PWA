@@ -1,41 +1,21 @@
+@reference '#styles.css';
+
 .overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  background: #000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  @apply fixed inset-0 z-50 flex flex-col items-center justify-center bg-black;
 }
 
 .video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  @apply absolute inset-0 h-full w-full object-cover;
 }
 
 .frame {
-  position: relative;
-  width: min(70vw, 320px);
-  aspect-ratio: 1;
-  border: 3px solid var(--teal);
-  border-radius: 16px;
+  @apply relative aspect-square w-[min(70vw,320px)] rounded-2xl border-[3px] border-teal;
 }
 
 .error {
-  position: relative;
-  color: #fff;
-  background: rgb(0 0 0 / 70%);
-  padding: 10px 14px;
-  border-radius: 10px;
-  margin: 12px;
-  text-align: center;
+  @apply relative m-3 rounded-md bg-black/70 px-3.5 py-2.5 text-center text-white;
 }
 
 .close {
-  position: absolute;
-  bottom: calc(24px + env(safe-area-inset-bottom));
+  @apply absolute bottom-[calc(24px+env(safe-area-inset-bottom))];
 }

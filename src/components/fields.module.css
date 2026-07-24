@@ -1,24 +1,17 @@
+@reference '#styles.css';
+
 .segmented {
-  display: flex;
-  gap: 8px;
+  @apply flex gap-2;
 }
 
 .seg {
-  flex: 1;
-  min-height: 48px;
-  border-radius: 10px;
-  border: 1px solid var(--line);
-  background: #0e1626;
-  color: var(--text);
-  font-size: 16px;
+  @apply min-h-12 flex-1 rounded-md border border-line bg-input-bg text-base text-text;
 }
 
 .segActive {
-  background: var(--teal-dark);
-  border-color: var(--teal);
-  font-weight: 700;
+  @apply border-teal bg-teal-dark font-bold;
 }
 
 .seg:disabled {
-  opacity: 0.6;
+  @apply opacity-60;
 }

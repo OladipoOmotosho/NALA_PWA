@@ -1,43 +1,33 @@
+@reference '#styles.css';
+
 .banner {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  padding-top: calc(10px + env(safe-area-inset-top));
-  font-size: 15px;
+  @apply sticky top-0 z-20 flex items-center gap-2.5 px-3.5 py-2.5 text-[15px] pt-[calc(10px+env(safe-area-inset-top))];
 }
 
 .online {
-  background: #064e3b;
+  @apply bg-[#064e3b];
 }
 
 .offline {
-  background: #7c2d12;
+  @apply bg-[#7c2d12];
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex: none;
+  @apply size-2.5 flex-none rounded-full;
 }
 
 .online .dot {
-  background: var(--green);
+  @apply bg-green;
 }
 
 .offline .dot {
-  background: var(--amber);
+  @apply bg-amber;
 }
 
 .text {
-  flex: 1;
-  min-width: 0;
+  @apply min-w-0 flex-1;
 }
 
 .alert {
-  color: #fecaca;
+  @apply text-[#fecaca];
 }

@@ -4,109 +4,83 @@
  * would be duplication, not separation of concerns. Everything else lives
  * in the CSS Module of the single component that owns it.
  *
+ * Written with Tailwind's @apply against the @theme mapping in styles.css
+ * (bg-card/text-muted/etc. resolve to this app's own CSS custom properties,
+ * not Tailwind's stock palette). Values with no clean match on Tailwind's
+ * default scale (this app predates Tailwind, so plenty don't) use arbitrary
+ * bracket syntax — that's expected here, not a smell.
+ *
  * Import explicitly where needed:
  *   import p from '../../styles/primitives.module.css';
  *   <section className={p.card}>
  */
+@reference '#styles.css';
 
 .card {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 14px;
-  margin: 12px 0;
+  @apply my-3 rounded-xl border border-line bg-card p-[14px];
 }
 
 .card h2 {
-  margin: 0 0 10px;
-  font-size: 18px;
-  color: var(--teal);
+  @apply mb-[10px] text-[18px] text-teal;
 }
 
 .field {
-  display: block;
-  margin: 12px 0;
+  @apply my-3 block;
 }
 
 .fieldLabel {
-  display: block;
-  font-size: 14px;
-  color: var(--muted);
-  margin-bottom: 6px;
+  @apply mb-[6px] block text-sm text-muted;
 }
 
 .fieldHint {
-  display: block;
-  font-size: 13px;
-  color: var(--muted);
-  margin-top: 6px;
+  @apply mt-[6px] block text-[13px] text-muted;
 }
 
 .req {
-  color: var(--red);
+  @apply text-red;
 }
 
 .grid2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 10px;
-  align-items: start;
+  @apply grid grid-cols-2 items-start gap-x-[10px];
 }
 
 /* grey context (read-only) block — the workbook's grey columns */
 .contextGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin: 12px 0;
+  @apply my-3 grid grid-cols-2 gap-2;
 }
 
 .contextItem {
-  background: #1a2438;
-  border-radius: 10px;
-  padding: 8px 10px;
+  @apply rounded-md bg-[#1a2438] px-[10px] py-2;
 }
 
 .contextLabel {
-  display: block;
-  font-size: 12px;
-  color: var(--muted);
+  @apply block text-xs text-muted;
 }
 
 .contextValue {
-  font-size: 15px;
+  @apply text-[15px];
 }
 
 .warn {
-  color: var(--amber);
-  font-size: 14px;
+  @apply text-sm text-amber;
 }
 
 .toast {
-  background: #064e3b;
-  border-radius: 12px;
-  padding: 10px 14px;
-  margin: 12px 0;
-  font-size: 15px;
+  @apply my-3 rounded-lg bg-[#064e3b] px-[14px] py-[10px] text-[15px];
 }
 
 .errorText {
-  color: #fca5a5;
-  font-size: 13px;
-  margin-top: 6px;
-  overflow-wrap: anywhere;
+  @apply mt-[6px] text-[13px] text-[#fca5a5] [overflow-wrap:anywhere];
 }
 
 .btnCol {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  @apply flex flex-col gap-[10px];
 }
 
 .muted {
-  color: var(--muted);
+  @apply text-muted;
 }
 
 .center {
-  text-align: center;
+  @apply text-center;
 }
