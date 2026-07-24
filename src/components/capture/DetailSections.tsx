@@ -2,6 +2,7 @@
 import type { Submission } from '../../domain/types';
 import { COMPONENT_TYPES, DEFICIENCY_CATEGORIES, PRIORITIES, RISK_LEVELS } from '../../domain/lookups';
 import { Select, YesNo } from '../fields';
+import { FieldReferenceHelper } from './FieldReferenceHelper';
 
 export type SetField = <K extends keyof Submission>(key: K, value: Submission[K]) => void;
 
@@ -97,6 +98,7 @@ export function DeficiencySection({ form, set }: SectionProps) {
       <Select label="Mechanism" value={form.mechanism} options={category?.mechanisms ?? []} onChange={(v) => set('mechanism', v)} />
       <Select label="Focus Area" value={form.focusArea} options={category?.focusAreas ?? []} onChange={(v) => set('focusArea', v)} />
       <YesNo label="Vibration Present" value={form.vibrationPresent} onChange={(v) => set('vibrationPresent', v)} />
+      <FieldReferenceHelper />
     </section>
   );
 }
