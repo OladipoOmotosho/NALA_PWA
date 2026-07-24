@@ -62,9 +62,12 @@ Shared foundation, not components themselves:
 - **One runtime dependency: `lucide-react`** (icons). Everything else —dates,
   portals, positioning— is either a browser API (`react-dom`'s
   `createPortal`, `getBoundingClientRect`) or hand-rolled.
-- **Touch targets ≥ 48px**, per this app's existing PRD requirement
-  (gloved, outdoor, one-handed use) — every interactive component respects
-  `theme.minTouchTarget`.
+- **Touch targets ≥ 48px by default**, per this app's existing PRD
+  requirement (gloved, outdoor, one-handed use) — every interactive
+  component's default size respects `theme.minTouchTarget`. The one
+  documented exception is `Button`'s `size="sm"` (40px), a deliberate
+  opt-in for dense contexts (see [Button.md](./Button.md)); reach for it
+  only where that tradeoff is explicitly warranted, never as the default.
 
 ## Styling (2026-07-24 migration: CSS Modules, co-located)
 

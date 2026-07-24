@@ -34,6 +34,12 @@
   transition: border-color 120ms ease;
 }
 
+.input:focus-visible {
+  border-color: var(--teal);
+  outline: 2px solid var(--teal);
+  outline-offset: 1px;
+}
+
 .inputDisabled {
   background: var(--card);
 }

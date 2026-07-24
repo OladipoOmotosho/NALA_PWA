@@ -87,6 +87,7 @@ export function TextInput({
 }: TextInputProps) {
   const reactId = useId();
   const inputId = `ti-${reactId}`;
+  const errorId = `${inputId}-error`;
   const [isFocused, setIsFocused] = useState(false);
   const [touched, setTouched] = useState(false);
   const [secure, setSecure] = useState(secureTextEntry);
@@ -131,7 +132,9 @@ export function TextInput({
     onFocus: handleFocus,
     onBlur: handleBlur,
     'aria-label': aria['aria-label'] ?? fieldLabel,
+    'aria-required': required || undefined,
     'aria-invalid': resolvedError || undefined,
+    'aria-describedby': resolvedError && resolvedErrorText ? errorId : undefined,
     className: cx(styles.input, multiline && styles.multiline, disabled && styles.disabled),
   };
 
@@ -170,7 +173,7 @@ export function TextInput({
         {!secureTextEntry && icon && <span className={styles.iconWrapper}>{icon}</span>}
       </div>
       {resolvedError && resolvedErrorText && (
-        <div role="alert" className={styles.errorText}>
+        <div id={errorId} role="alert" className={styles.errorText}>
           {resolvedErrorText}
         </div>
       )}
