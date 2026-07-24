@@ -10,7 +10,7 @@ describe('form options (generated from the workbook Details sheet)', () => {
     expect(FORM_OPTIONS.categories.length).toBe(5);
     expect(FORM_OPTIONS.components.length).toBe(27);
     expect(FORM_OPTIONS.subComponents.length).toBe(11);
-    expect(FORM_OPTIONS.locationDescriptions).toEqual(['British Colombia', 'New Brunswick', 'Ontario', 'Quebec']);
+    expect(FORM_OPTIONS.locationDescriptions).toEqual(['British Columbia', 'New Brunswick', 'Ontario', 'Quebec']);
     expect(FORM_OPTIONS.deficiencyCategories.length).toBe(15);
     expect(FORM_OPTIONS.deficiencyDescriptions.length).toBe(29);
   });
