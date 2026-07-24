@@ -1,9 +1,38 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
 dev-dist/
 coverage/
-*.local
+*.tsbuildinfo
+
+# Env / secrets — never commit real values
 .env
 .env.*
+*.local
+
+# Reference-only material, not part of the shipped app
+# (see components/redundant/MANIFEST.md for why each file lives there)
+src/components/redundant/
+
+# internal-docs/: only technical-documentation/ is pushed (the component
+# developer docs); any other future subfolder here stays local-only.
+internal-docs/*
+!internal-docs/technical-documentation/
+
+# OS cruft
 .DS_Store
-*.tsbuildinfo
+Thumbs.db
+Desktop.ini
+
+# Editor cruft
+.vscode/
+.idea/
+*.swp
+*~
+
+# Package-manager logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

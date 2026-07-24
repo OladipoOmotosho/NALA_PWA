@@ -12,6 +12,10 @@ export type AddPhotoResult =
   | { ok: true; photoId: string; photoCount: number }
   | { ok: false; reason: 'quota' | 'cap' | 'decode' };
 
+export type StorePhotoResult =
+  | { ok: true; photoId: string; photoCount: number }
+  | { ok: false; reason: 'cap' };
+
 async function downscale(file: File): Promise<Blob> {
   const bitmap = await createImageBitmap(file);
   const scale = Math.min(1, MAX_DIMENSION_PX / Math.max(bitmap.width, bitmap.height));
@@ -28,12 +32,22 @@ async function downscale(file: File): Promise<Blob> {
   return blob ?? file;
 }
 
-/** Durable insert of an already-processed blob with Photo_Register metadata. */
-export async function storePhoto(clientRecordId: string, blob: Blob): Promise<{ photoId: string; photoCount: number }> {
+/**
+ * Durable insert of an already-processed blob with Photo_Register metadata.
+ *
+ * The cap check and the write happen inside the same IndexedDB transaction
+ * so they're atomic: IndexedDB serializes overlapping readwrite transactions
+ * on the same object store, so two concurrent calls can no longer both
+ * observe room under MAX_PHOTOS_PER_RECORD and each insert, exceeding it.
+ * This is the single choke point for writing a photo row — callers (incl.
+ * addPhoto) always get cap enforcement, they can't bypass it.
+ */
+export async function storePhoto(clientRecordId: string, blob: Blob): Promise<StorePhotoResult> {
   const inspectorName = (await getMeta<string>('inspectorName')) ?? (await getMeta<string>('engineerEmail')) ?? '';
   const photoId = crypto.randomUUID();
-  const photoCount = await db.transaction('rw', db.photos, db.submissions, async () => {
+  return db.transaction('rw', db.photos, db.submissions, async (): Promise<StorePhotoResult> => {
     const n = (await db.photos.where('clientRecordId').equals(clientRecordId).count()) + 1;
+    if (n > MAX_PHOTOS_PER_RECORD) return { ok: false, reason: 'cap' };
     await db.photos.put({
       photoId,
       clientRecordId,
@@ -46,15 +60,12 @@ export async function storePhoto(clientRecordId: string, blob: Blob): Promise<{ 
       photoDescription: '',
     });
     await db.submissions.update(clientRecordId, { photoCount: n });
-    return n;
+    return { ok: true, photoId, photoCount: n };
   });
-  return { photoId, photoCount };
 }
 
 export async function addPhoto(clientRecordId: string, file: File): Promise<AddPhotoResult> {
   if (await photoCaptureBlocked()) return { ok: false, reason: 'quota' };
-  const count = await db.photos.where('clientRecordId').equals(clientRecordId).count();
-  if (count >= MAX_PHOTOS_PER_RECORD) return { ok: false, reason: 'cap' };
 
   let blob: Blob;
   try {
@@ -63,8 +74,7 @@ export async function addPhoto(clientRecordId: string, file: File): Promise<AddP
     return { ok: false, reason: 'decode' };
   }
 
-  const stored = await storePhoto(clientRecordId, blob);
-  return { ok: true, ...stored };
+  return storePhoto(clientRecordId, blob);
 }
 
 /** Editing the description re-queues the photo for upload — the backend is

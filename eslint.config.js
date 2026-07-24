@@ -4,14 +4,24 @@ import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
 
 export default tseslint.config(
-  { ignores: ['dist', 'dev-dist', 'node_modules'] },
+  {
+    ignores: [
+      'dist',
+      'dev-dist',
+      'node_modules',
+      // Reference-only originals this project's UI components were tailored
+      // from — not part of the app, written against react-native/@retayl/*
+      // which aren't installed here. See components/redundant/MANIFEST.md.
+      'src/components/redundant',
+    ],
+  },
   ...tseslint.configs.recommended,
   {
     files: ['src/**/*.{ts,tsx}'],
     plugins: { 'react-hooks': reactHooks },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       '@typescript-eslint/no-floating-promises': 'off', // needs type-aware linting; typecheck covers most
       'no-console': 'off', // console is the structured log sink (util/log.ts)
     },
