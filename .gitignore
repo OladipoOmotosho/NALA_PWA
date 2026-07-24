@@ -15,7 +15,11 @@ coverage/
 # Reference-only material, not part of the shipped app
 # (see components/redundant/MANIFEST.md for why each file lives there)
 src/components/redundant/
-internal-docs/
+
+# internal-docs/: only technical-documentation/ is pushed (the component
+# developer docs); any other future subfolder here stays local-only.
+internal-docs/*
+!internal-docs/technical-documentation/
 
 # OS cruft
 .DS_Store
