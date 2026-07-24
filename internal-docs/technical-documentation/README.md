@@ -74,40 +74,67 @@ Shared foundation, not components themselves:
 
 ## Styling
 
-Two migrations, both still in force:
+Three migrations, layered on top of each other, all still in force:
 
 **2026-07-24, CSS Modules, co-located.** Every component and screen used to
 share one 500-line global `src/styles.css` grab-bag, with `ui/` components
 styled via inline style objects. Neither scaled — no separation of concerns,
 no atomicity, and a global stylesheet nobody could safely edit without
-grepping the whole app first. Fix: every component/screen owns a co-located
-`*.module.css` next to its `.tsx` (`Button.tsx` + `Button.module.css`); Vite
-scopes the class names automatically. Genuinely cross-cutting layout atoms
-used identically by 2+ unrelated components (`.card`, `.field`, `.grid2`,
-`.toast`, …) live in one explicit `src/styles/primitives.module.css` instead
-of being duplicated — the one deliberate exception to "co-located only".
-Class names are camelCase, not kebab-case (`fieldLabel`, not `field-label`)
-since CSS Modules classes become JS object keys.
+grepping the whole app first. Fix: every component/screen owned a co-located
+`*.module.css` next to its `.tsx`. Genuinely cross-cutting layout atoms used
+identically by 2+ unrelated components (`.card`, `.field`, `.grid2`,
+`.toast`, …) moved into one explicit `src/styles/primitives.module.css`
+instead of being duplicated — the one deliberate exception to "co-located
+only", and it's the one piece of this migration every screen still uses.
 
-**2026-07-24, Tailwind coupled in via `@apply`.** Every `*.module.css` file's
-declarations are now written as Tailwind utility classes composed with
-`@apply`, rather than hand-written CSS properties — same files, same
-co-location, same camelCase class names, same `primitives.module.css`
-exception; only the vocabulary *inside* each rule changed. JSX never
-contains a raw Tailwind utility className directly — that would collapse
-the separation of concerns this whole convention exists to protect, putting
-styling vocabulary back in the markup instead of behind a named class.
+**2026-07-24, Tailwind installed, coupled in via `@apply`.** Every
+`*.module.css` file's declarations were rewritten as Tailwind utility
+classes composed with `@apply` rather than hand-written CSS properties —
+same files, same co-location; only the vocabulary *inside* each rule
+changed.
 
-```css
-/* Tooltip.module.css */
-@reference '#styles.css';
+**2026-07-24, split: `ui/` keeps `@apply`, screens/app components went
+inline.** In practice, wholesale `@apply` fought Tailwind's own design
+— its docs recommend `@apply` only for extracting genuinely repeated
+utility combinations, not as a blanket replacement for hand-written CSS.
+Hiding utilities behind a class name in a separate file loses Tailwind's
+actual selling points (styles visible right where they're used, editor
+autocomplete/class-sorting) while still paying the `@reference` boilerplate
+and the CSS-Modules-isolation footgun below. Landing spot:
 
-.trigger {
-  @apply inline-flex min-h-12 min-w-12 cursor-pointer items-center justify-center;
-}
+- **`ui/*.tsx` + `ui/*.module.css` (and `src/styles/primitives.module.css`)
+  keep `@apply`.** Each is the one authoritative place its variants are
+  defined — `Button.module.css` shows every variant/size together, a
+  reader doesn't have to hunt through conditionals in `Button.tsx` to find
+  them. Class names stay camelCase (`fieldLabel`, not `field-label`) since
+  they become JS object keys.
+- **Every screen and `components/*` file (`App.tsx`, `screens/*`,
+  `components/*`) uses Tailwind utility classNames directly in JSX**, no
+  co-located `.module.css`. These are one-off layouts, not reused variants,
+  so Tailwind's colocation is a genuine win here: `className="flex
+  items-center gap-2.5"` is visible right at the call site. Compose
+  conditional classes with the shared `ui/cx.ts` helper
+  (`cx('...', isOpen && '...')`); a literal string gets pulled into a local
+  `const` only when the exact same class list repeats more than once in one
+  file (see `fields.tsx`'s `SEG_BASE`/`SEG_ACTIVE`).
+- **Descendant/pseudo-element selectors become Tailwind variants at the
+  usage site.** `RecordsHubScreen`'s collapse chevron used to be
+  `.collapse[open] > summary::after { transform: rotate(90deg) }`; inline,
+  the `<details>` gets `className="group ..."` and the `<summary>` gets
+  `after:content-['▸'] group-open:after:rotate-90` — Tailwind's `group-*`
+  variant reacts to an ancestor's state (here, `<details>`'s `open`
+  attribute) without a hand-written selector.
+
+```tsx
+// Tooltip.tsx (ui/ — stays @apply)
+<span className={styles.trigger}>
+
+// RecordsScreen.tsx (screen — inline)
+<div className="my-2.5 rounded-xl border border-line bg-card px-3.5 py-3">
 ```
 
-Mechanics:
+Mechanics that still apply wherever `@apply` is used (`ui/`,
+`primitives.module.css`):
 
 - **`@reference '#styles.css';` is required at the top of every file that
   uses `@apply`.** Tailwind v4 compiles each CSS Modules file in isolation,
@@ -120,10 +147,11 @@ Mechanics:
 - **`src/styles.css`'s `@theme inline { ... }` block maps this app's own
   design tokens into Tailwind's theme** — `--color-teal: var(--teal)`, etc. —
   so `bg-teal`, `text-muted`, `border-line` resolve to this app's own CSS
-  custom properties, not Tailwind's stock palette. The `--radius-*` scale is
-  overridden outright (not extended) so `rounded-sm/md/lg/xl` mean exactly
-  what they meant pre-Tailwind (8/10/12/14px). One source of truth either
-  way: change a value in `:root`, every `@apply`'d component picks it up.
+  custom properties everywhere, `@apply` or inline, not Tailwind's stock
+  palette. The `--radius-*` scale is overridden outright (not extended) so
+  `rounded-sm/md/lg/xl` mean exactly what they meant pre-Tailwind
+  (8/10/12/14px). One source of truth either way: change a value in
+  `:root`, every usage picks it up.
 - **Arbitrary values (`px-[14px]`, `bg-[#1a2438]`) are expected, not a
   smell** — this app's spacing/radius/color values predate Tailwind and
   don't all land on its default scale. Prefer the canonical scale step when
@@ -137,11 +165,11 @@ Mechanics:
   restores default `<p>` spacing that Tailwind's Preflight reset zeroes,
   since most bare paragraphs in this app don't carry their own spacing
   class. Nothing else belongs there.
-- **Genuinely dynamic values stay inline**: DOM-measured positions
-  (`getBoundingClientRect` for `Select`/`Autocomplete`/`Tooltip`'s portals),
-  SVG geometry (`Spinner`'s stroke-dashoffset math), and arbitrary
-  per-instance props (`Text`'s `size`/`color`) are the accepted exceptions —
-  everything else is a class.
+- **Genuinely dynamic values stay inline as `style`, not as a class,
+  anywhere in the app**: DOM-measured positions (`getBoundingClientRect`
+  for `Select`/`Autocomplete`/`Tooltip`'s portals), SVG geometry
+  (`Spinner`'s stroke-dashoffset math), and arbitrary per-instance props
+  (`Text`'s `size`/`color`) are the accepted exceptions.
 - **Enforced, not just documented** — CI runs `stylelint` (`yarn lint:css`)
   with a rule that forbids any class selector in `src/styles.css` itself, so
   the global file mechanically cannot regrow into a monolith. ESLint's

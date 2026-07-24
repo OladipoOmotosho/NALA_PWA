@@ -8,7 +8,6 @@ import { StatusBadge } from '../ui/StatusBadge';
 import { Modal } from '../ui/Modal';
 import { cx } from '../ui/cx';
 import p from '../styles/primitives.module.css';
-import styles from './RecordsScreen.module.css';
 
 interface Props {
   onEdit: (clientRecordId: string) => void;
@@ -25,18 +24,18 @@ export function RecordsScreen({ onEdit }: Props) {
   return (
     <div>
       {records.map((r) => (
-        <div key={r.clientRecordId} className={styles.card}>
-          <div className={styles.head}>
+        <div key={r.clientRecordId} className="my-2.5 rounded-xl border border-line bg-card px-3.5 py-3">
+          <div className="flex items-center justify-between gap-2">
             <strong>{r.assetTag || '(no asset)'}</strong>
             <StatusBadge status={r.syncStatus} />
           </div>
-          <div className={styles.sub}>
+          <div className="mt-1 text-sm text-muted">
             {r.siteCode || 'Site —'} · {r.deficiencyCategory ? r.deficiencyCategory.split(' - ')[0] : 'no category'} ·{' '}
             {r.priorityRating || 'P?'} · {r.inspectionDate}
             {r.photoCount > 0 && <> · 📷 {r.photoCount}</>}
           </div>
           {r.lastError && r.syncStatus !== 'synced' && <div className={p.errorText}>{r.lastError}</div>}
-          <div className={styles.actions}>
+          <div className="mt-2.5 flex gap-2">
             <Button size="sm" onClick={() => onEdit(r.clientRecordId)}>
               {r.syncStatus === 'draft' ? 'Resume' : 'Edit'}
             </Button>

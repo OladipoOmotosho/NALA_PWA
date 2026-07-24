@@ -23,7 +23,6 @@ import {
 import { Select } from '../fields';
 import { Button } from '../../ui/Button';
 import p from '../../styles/primitives.module.css';
-import styles from './FieldReferenceHelper.module.css';
 
 export function FieldReferenceHelper() {
   const [open, setOpen] = useState(false);
@@ -35,12 +34,12 @@ export function FieldReferenceHelper() {
   const leaf = taxonomyLeaf(category, equipmentType, component, subcomponent);
 
   return (
-    <div className={styles.wrapper}>
+    <div className="mt-3">
       <Button variant="secondary" size="sm" onClick={() => setOpen((v) => !v)}>
         {open ? 'Hide' : 'Need help identifying this?'} Field Reference
       </Button>
       {open && (
-        <div className={styles.panel}>
+        <div className="mt-2.5 rounded-md border border-dashed border-line bg-[#1a2438] p-3">
           <p className={p.fieldHint}>
             Guidance only — picks here are not saved on the inspection. Use them to help choose the Deficiency
             Category, Detailed Description, Mechanism and Focus Area above.

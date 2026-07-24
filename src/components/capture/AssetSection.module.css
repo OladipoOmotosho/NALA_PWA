@@ -1,9 +1,0 @@
-@reference '#styles.css';
-
-.row {
-  @apply flex items-end gap-2.5;
-}
-
-.grow {
-  @apply flex-1;
-}

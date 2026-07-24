@@ -1,9 +1,0 @@
-@reference '#styles.css';
-
-.wrapper {
-  @apply mt-3;
-}
-
-.panel {
-  @apply mt-2.5 rounded-md border border-dashed border-line bg-[#1a2438] p-3;
-}

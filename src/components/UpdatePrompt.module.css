@@ -1,5 +1,0 @@
-@reference '#styles.css';
-
-.prompt {
-  @apply sticky top-0 z-25 flex items-center gap-2.5 bg-[#1e3a8a] px-3.5 py-2.5 text-[15px];
-}

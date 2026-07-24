@@ -1,9 +1,0 @@
-@reference '#styles.css';
-
-.queueRow {
-  @apply border-b border-line py-2 text-[15px];
-}
-
-.mono {
-  @apply font-mono text-muted;
-}

@@ -10,7 +10,6 @@ import { Button } from '../ui/Button';
 import { StatusBadge } from '../ui/StatusBadge';
 import { Modal } from '../ui/Modal';
 import p from '../styles/primitives.module.css';
-import styles from './DiagnosticsScreen.module.css';
 
 const PURGE_DAYS = 30;
 
@@ -94,8 +93,8 @@ export function DiagnosticsScreen() {
         <h2>Queue ({queue.length})</h2>
         {queue.length === 0 && <p className={p.muted}>Queue empty — everything synced.</p>}
         {queue.map((r) => (
-          <div key={r.clientRecordId} className={styles.queueRow}>
-            <span className={styles.mono}>#{r.submissionSequence}</span> <strong>{r.assetTag || '(no asset)'}</strong>{' '}
+          <div key={r.clientRecordId} className="border-b border-line py-2 text-[15px]">
+            <span className="font-mono text-muted">#{r.submissionSequence}</span> <strong>{r.assetTag || '(no asset)'}</strong>{' '}
             <StatusBadge status={r.syncStatus} />
             <span className={p.muted}> attempts: {r.attemptCount}</span>
             {r.lastError && <div className={p.errorText}>{r.lastError}</div>}

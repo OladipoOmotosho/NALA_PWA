@@ -6,7 +6,6 @@ import { RecordsHubScreen } from './screens/RecordsHubScreen';
 import { startEngine } from './sync/engine';
 import { requestPersistentStorage } from './db/storage';
 import { cx } from './ui/cx';
-import styles from './App.module.css';
 
 /** Two screens total (field-usability decision 2026-07-24): capture, and a
  * records hub that folds in sync diagnostics + settings as collapsibles. */
@@ -30,10 +29,10 @@ export default function App() {
   };
 
   return (
-    <div className={styles.app}>
+    <div className="flex min-h-dvh flex-col">
       <SyncBanner />
       <UpdatePrompt />
-      <main className={styles.content}>
+      <main className="mx-auto w-full max-w-160 flex-1 px-3 pt-3 pb-24">
         {tab === 'capture' && (
           <CaptureScreen
             key={editRecordId ?? `new-${captureKey}`}
@@ -53,13 +52,17 @@ export default function App() {
           />
         )}
       </main>
-      <nav className={styles.tabbar}>
-        <button type="button" className={cx(styles.tab, tab === 'capture' && styles.tabActive)} onClick={newCapture}>
+      <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-card pb-[env(safe-area-inset-bottom)]">
+        <button
+          type="button"
+          className={cx('min-h-14 flex-1 border-none bg-transparent text-sm text-muted', tab === 'capture' && 'font-bold text-teal')}
+          onClick={newCapture}
+        >
           ➕ New Inspection
         </button>
         <button
           type="button"
-          className={cx(styles.tab, tab === 'records' && styles.tabActive)}
+          className={cx('min-h-14 flex-1 border-none bg-transparent text-sm text-muted', tab === 'records' && 'font-bold text-teal')}
           onClick={() => setTab('records')}
         >
           📋 Records

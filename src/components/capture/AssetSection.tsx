@@ -10,7 +10,6 @@ import { TextInput } from '../../ui/TextInput';
 import { Autocomplete } from '../../ui/Autocomplete';
 import type { SetField } from './DetailSections';
 import p from '../../styles/primitives.module.css';
-import styles from './AssetSection.module.css';
 
 interface Props {
   form: Submission;
@@ -24,8 +23,8 @@ export function AssetSection({ form, set, onResolve, onScan, onCopyForward }: Pr
   return (
     <section className={p.card}>
       <h2>Asset</h2>
-      <div className={styles.row}>
-        <div className={styles.grow}>
+      <div className="flex items-end gap-2.5">
+        <div className="flex-1">
           <TextInput
             fieldLabel="Asset ID"
             required

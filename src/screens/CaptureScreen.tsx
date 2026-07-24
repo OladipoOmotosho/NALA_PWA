@@ -30,7 +30,6 @@ import { triggerFlush } from '../sync/engine';
 import { Button } from '../ui/Button';
 import { cx } from '../ui/cx';
 import p from '../styles/primitives.module.css';
-import styles from './CaptureScreen.module.css';
 
 interface Props {
   /** Resume an existing draft/record; undefined = new capture. */
@@ -162,7 +161,7 @@ export function CaptureScreen({ editRecordId, onDone }: Props) {
       )}
 
       {derived.priorityRating === 'P1' && (
-        <div className={styles.p1Banner} role="alert">
+        <div className="my-3 rounded-lg bg-red px-3.5 py-3 font-bold text-white" role="alert">
           P1 — CRITICAL. Immediate Site Notification is set to Yes. Call the site contact now.
         </div>
       )}
@@ -187,17 +186,19 @@ export function CaptureScreen({ editRecordId, onDone }: Props) {
       />
 
       {missing.length > 0 && (
-        <div className={styles.validationBox} role="alert">
+        <div className="my-3 rounded-lg bg-[#7c2d12] px-3.5 py-3" role="alert">
           Required before submit: {missing.join(', ')}
         </div>
       )}
       {toast && <div className={p.toast}>{toast}</div>}
 
-      <div className={styles.actionbar}>
-        <Button variant="secondary" onClick={() => void persist('draft')}>
+      <div className="my-4 flex gap-2.5">
+        <Button variant="secondary" className="flex-1" onClick={() => void persist('draft')}>
           Save draft
         </Button>
-        <Button onClick={() => void persist('pending')}>Save &amp; queue</Button>
+        <Button className="flex-1" onClick={() => void persist('pending')}>
+          Save &amp; queue
+        </Button>
       </div>
       {savedAt && (
         <p className={cx(p.muted, p.center)}>Saved locally at {new Date(savedAt).toLocaleTimeString()}</p>

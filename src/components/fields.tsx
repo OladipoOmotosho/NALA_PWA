@@ -1,7 +1,9 @@
 /** Shared form controls: gloves-friendly Yes/No segmented control and labelled select. */
 import { cx } from '../ui/cx';
 import p from '../styles/primitives.module.css';
-import styles from './fields.module.css';
+
+const SEG_BASE = 'min-h-12 flex-1 rounded-md border border-line bg-input-bg text-base text-text disabled:opacity-60';
+const SEG_ACTIVE = 'border-teal bg-teal-dark font-bold';
 
 export function YesNo({
   label,
@@ -19,10 +21,10 @@ export function YesNo({
   return (
     <div className={p.field}>
       <span className={p.fieldLabel}>{label}</span>
-      <div className={styles.segmented} role="radiogroup" aria-label={label}>
+      <div className="flex gap-2" role="radiogroup" aria-label={label}>
         <button
           type="button"
-          className={cx(styles.seg, value === true && styles.segActive)}
+          className={cx(SEG_BASE, value === true && SEG_ACTIVE)}
           disabled={disabled}
           onClick={() => onChange(true)}
         >
@@ -30,7 +32,7 @@ export function YesNo({
         </button>
         <button
           type="button"
-          className={cx(styles.seg, value === false && styles.segActive)}
+          className={cx(SEG_BASE, value === false && SEG_ACTIVE)}
           disabled={disabled}
           onClick={() => onChange(false)}
         >
