@@ -1,0 +1,25 @@
+.p1Banner {
+  background: var(--red);
+  color: #fff;
+  font-weight: 700;
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin: 12px 0;
+}
+
+.validationBox {
+  background: #7c2d12;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 12px 0;
+}
+
+.actionbar {
+  display: flex;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.actionbar > * {
+  flex: 1;
+}

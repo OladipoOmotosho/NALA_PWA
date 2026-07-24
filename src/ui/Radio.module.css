@@ -1,0 +1,47 @@
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  cursor: pointer;
+}
+
+.label.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.hiddenInput {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ring {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  transition: border-color 120ms ease;
+}
+
+.ring.selected {
+  border-color: var(--teal);
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--teal);
+  transform: scale(0);
+  transition: transform 120ms ease;
+}
+
+.dot.selected {
+  transform: scale(1);
+}

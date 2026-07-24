@@ -1,0 +1,61 @@
+.container {
+  width: 100%;
+  position: relative;
+}
+
+.label {
+  display: block;
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.inputRow {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+}
+
+.input {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px 10px 34px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #0e1626;
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 120ms ease;
+}
+
+.inputDisabled {
+  background: var(--card);
+}
+
+.dropdown {
+  max-height: 240px;
+  overflow-y: auto;
+  background: #0e1626;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgb(0 0 0 / 35%);
+  z-index: 60;
+}
+
+.option {
+  padding: 10px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text);
+}
+
+.optionHovered {
+  background: rgb(20 184 166 / 10%);
+}

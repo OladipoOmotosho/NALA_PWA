@@ -6,6 +6,9 @@ import { discardSubmission, listActiveRecords } from '../db/submissions';
 import { Button } from '../ui/Button';
 import { StatusBadge } from '../ui/StatusBadge';
 import { Modal } from '../ui/Modal';
+import { cx } from '../ui/cx';
+import p from '../styles/primitives.module.css';
+import styles from './RecordsScreen.module.css';
 
 interface Props {
   onEdit: (clientRecordId: string) => void;
@@ -16,24 +19,24 @@ export function RecordsScreen({ onEdit }: Props) {
   const [discardTarget, setDiscardTarget] = useState<string | null>(null);
 
   if (records.length === 0) {
-    return <p className="muted center">No inspections on this device yet.</p>;
+    return <p className={cx(p.muted, p.center)}>No inspections on this device yet.</p>;
   }
 
   return (
-    <div className="records">
+    <div>
       {records.map((r) => (
-        <div key={r.clientRecordId} className="record-card">
-          <div className="record-head">
+        <div key={r.clientRecordId} className={styles.card}>
+          <div className={styles.head}>
             <strong>{r.assetTag || '(no asset)'}</strong>
             <StatusBadge status={r.syncStatus} />
           </div>
-          <div className="record-sub">
+          <div className={styles.sub}>
             {r.siteCode || 'Site —'} · {r.deficiencyCategory ? r.deficiencyCategory.split(' - ')[0] : 'no category'} ·{' '}
             {r.priorityRating || 'P?'} · {r.inspectionDate}
             {r.photoCount > 0 && <> · 📷 {r.photoCount}</>}
           </div>
-          {r.lastError && r.syncStatus !== 'synced' && <div className="record-error">{r.lastError}</div>}
-          <div className="record-actions">
+          {r.lastError && r.syncStatus !== 'synced' && <div className={p.errorText}>{r.lastError}</div>}
+          <div className={styles.actions}>
             <Button size="sm" onClick={() => onEdit(r.clientRecordId)}>
               {r.syncStatus === 'draft' ? 'Resume' : 'Edit'}
             </Button>

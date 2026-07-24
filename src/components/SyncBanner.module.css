@@ -1,0 +1,43 @@
+.banner {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  padding-top: calc(10px + env(safe-area-inset-top));
+  font-size: 15px;
+}
+
+.online {
+  background: #064e3b;
+}
+
+.offline {
+  background: #7c2d12;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.online .dot {
+  background: var(--green);
+}
+
+.offline .dot {
+  background: var(--amber);
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+}
+
+.alert {
+  color: #fecaca;
+}

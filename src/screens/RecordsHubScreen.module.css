@@ -1,0 +1,36 @@
+.collapse {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  margin: 12px 0;
+}
+
+.collapse > summary {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+
+.collapse > summary::-webkit-details-marker {
+  display: none;
+}
+
+.collapse > summary::after {
+  content: '▸';
+  margin-left: auto;
+  color: var(--muted);
+  transition: transform 0.15s;
+}
+
+.collapse[open] > summary::after {
+  transform: rotate(90deg);
+}
+
+.collapse > :not(summary) {
+  padding: 0 8px 8px;
+}

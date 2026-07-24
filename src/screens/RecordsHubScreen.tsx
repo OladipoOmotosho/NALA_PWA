@@ -3,6 +3,7 @@
 import { RecordsScreen } from './RecordsScreen';
 import { DiagnosticsScreen } from './DiagnosticsScreen';
 import { SettingsScreen } from './SettingsScreen';
+import styles from './RecordsHubScreen.module.css';
 
 interface Props {
   onEdit: (clientRecordId: string) => void;
@@ -10,13 +11,13 @@ interface Props {
 
 export function RecordsHubScreen({ onEdit }: Props) {
   return (
-    <div className="records-hub">
+    <div>
       <RecordsScreen onEdit={onEdit} />
-      <details className="collapse">
+      <details className={styles.collapse}>
         <summary>🔧 Sync &amp; diagnostics</summary>
         <DiagnosticsScreen />
       </details>
-      <details className="collapse">
+      <details className={styles.collapse}>
         <summary>⚙️ Settings</summary>
         <SettingsScreen />
       </details>

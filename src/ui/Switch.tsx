@@ -6,7 +6,8 @@
  * CSS-transition thumb) rather than reverse-engineering the missing file.
  * See internal-docs/technical-documentation/Switch.md.
  */
-import { colors, transition } from './theme';
+import { cx } from './cx';
+import styles from './Switch.module.css';
 
 export interface SwitchProps {
   checked: boolean;
@@ -14,11 +15,6 @@ export interface SwitchProps {
   disabled?: boolean;
   'aria-label'?: string;
 }
-
-const TRACK_WIDTH = 48;
-const TRACK_HEIGHT = 28;
-const THUMB_SIZE = 22;
-const THUMB_INSET = (TRACK_HEIGHT - THUMB_SIZE) / 2;
 
 export function Switch({ checked, onChange, disabled = false, ...aria }: SwitchProps) {
   return (
@@ -29,34 +25,9 @@ export function Switch({ checked, onChange, disabled = false, ...aria }: SwitchP
       aria-label={aria['aria-label']}
       disabled={disabled}
       onClick={() => onChange(!checked)}
-      style={{
-        position: 'relative',
-        width: TRACK_WIDTH,
-        height: TRACK_HEIGHT,
-        minHeight: TRACK_HEIGHT,
-        borderRadius: TRACK_HEIGHT / 2,
-        border: 'none',
-        background: checked ? colors.teal : colors.line,
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        opacity: disabled ? 0.5 : 1,
-        transition: `background ${transition.base}`,
-        padding: 0,
-        flexShrink: 0,
-      }}
+      className={cx(styles.track, checked && styles.checked)}
     >
-      <span
-        style={{
-          position: 'absolute',
-          top: THUMB_INSET,
-          left: checked ? TRACK_WIDTH - THUMB_SIZE - THUMB_INSET : THUMB_INSET,
-          width: THUMB_SIZE,
-          height: THUMB_SIZE,
-          borderRadius: '50%',
-          background: '#fff',
-          transition: `left ${transition.base}`,
-          boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
-        }}
-      />
+      <span className={cx(styles.thumb, checked && styles.checked)} />
     </button>
   );
 }

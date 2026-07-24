@@ -12,10 +12,15 @@
  * Kept: label, error state + message, required-on-blur validation,
  * prefix/suffix, secure-entry toggle, and the info tooltip (now backed by
  * this library's own Tooltip).
+ *
+ * Styling: every visual state here (error/focused/disabled/multiline) is a
+ * finite condition, so it's expressed as CSS Module modifier classes
+ * (TextInput.module.css) — nothing computed at runtime, no inline style.
  */
 import { useEffect, useId, useMemo, useState, type ChangeEvent, type FocusEvent, type ReactNode } from 'react';
-import { colors, minTouchTarget, radius, transition } from './theme';
+import { cx } from './cx';
 import { Tooltip } from './Tooltip';
+import styles from './TextInput.module.css';
 
 export type TextInputMode = 'text' | 'email' | 'tel' | 'url' | 'numeric' | 'decimal' | 'search';
 
@@ -95,8 +100,6 @@ export function TextInput({
     if (!required) setTouched(false);
   }, [required]);
 
-  const borderColor = resolvedError ? colors.red : isFocused ? colors.teal : colors.line;
-
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const raw = e.target.value;
     onChangeText(inputMode === 'decimal' ? filterDecimal(raw) : raw);
@@ -117,24 +120,26 @@ export function TextInput({
     inputMode,
   ]);
 
-  const inputStyle = {
-    flex: 1,
-    minHeight: multiline ? minTouchTarget * 2 : minTouchTarget,
-    padding: '10px 12px',
-    border: 'none',
-    outline: 'none',
-    background: 'transparent',
-    color: disabled ? colors.muted : colors.text,
-    fontSize: 16,
-    width: '100%',
-    resize: multiline ? ('vertical' as const) : undefined,
+  const sharedProps = {
+    id: inputId,
+    value,
+    placeholder,
+    disabled,
+    readOnly,
+    autoFocus,
+    maxLength,
+    onFocus: handleFocus,
+    onBlur: handleBlur,
+    'aria-label': aria['aria-label'] ?? fieldLabel,
+    'aria-invalid': resolvedError || undefined,
+    className: cx(styles.input, multiline && styles.multiline, disabled && styles.disabled),
   };
 
   return (
-    <div style={{ width: '100%' }}>
+    <div className={styles.container}>
       {fieldLabel && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 6 }}>
-          <label htmlFor={inputId} style={{ fontSize: 14, color: resolvedError ? colors.red : colors.muted }}>
+        <div className={styles.labelRow}>
+          <label htmlFor={inputId} className={cx(styles.label, resolvedError && styles.error)}>
             {fieldLabel}
             {required && ' *'}
           </label>
@@ -142,70 +147,30 @@ export function TextInput({
         </div>
       )}
       <div
-        style={{
-          display: 'flex',
-          alignItems: multiline ? 'flex-start' : 'center',
-          border: `1px solid ${borderColor}`,
-          borderRadius: radius.md,
-          background: disabled ? colors.card : '#0e1626',
-          opacity: disabled ? 0.6 : 1,
-          transition: `border-color ${transition.fast}`,
-        }}
+        className={cx(
+          styles.wrapper,
+          multiline && styles.multiline,
+          isFocused && styles.focused,
+          resolvedError && styles.error,
+          disabled && styles.disabled,
+        )}
       >
-        {prefixText && (
-          <span style={{ padding: '0 10px', borderRight: `1px solid ${colors.line}`, color: colors.muted, fontSize: 15 }}>
-            {prefixText}
-          </span>
-        )}
+        {prefixText && <span className={styles.prefix}>{prefixText}</span>}
         {multiline ? (
-          <textarea
-            id={inputId}
-            value={value}
-            placeholder={placeholder}
-            disabled={disabled}
-            readOnly={readOnly}
-            autoFocus={autoFocus}
-            maxLength={maxLength}
-            rows={3}
-            onChange={handleChange}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            aria-label={aria['aria-label'] ?? fieldLabel}
-            aria-invalid={resolvedError || undefined}
-            style={inputStyle}
-          />
+          <textarea {...sharedProps} rows={3} onChange={handleChange} />
         ) : (
-          <input
-            id={inputId}
-            type={htmlType}
-            value={value}
-            placeholder={placeholder}
-            disabled={disabled}
-            readOnly={readOnly}
-            autoFocus={autoFocus}
-            maxLength={maxLength}
-            onChange={handleChange}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            aria-label={aria['aria-label'] ?? fieldLabel}
-            aria-invalid={resolvedError || undefined}
-            style={inputStyle}
-          />
+          <input {...sharedProps} type={htmlType} onChange={handleChange} />
         )}
-        {suffixText && <span style={{ padding: '0 10px', color: colors.muted, fontSize: 12 }}>{suffixText}</span>}
+        {suffixText && <span className={styles.suffix}>{suffixText}</span>}
         {secureTextEntry && (
-          <button
-            type="button"
-            onClick={() => setSecure((s) => !s)}
-            style={{ background: 'none', border: 'none', color: colors.muted, padding: '0 12px', cursor: 'pointer' }}
-          >
+          <button type="button" onClick={() => setSecure((s) => !s)} className={styles.toggleButton}>
             {secure ? 'Show' : 'Hide'}
           </button>
         )}
-        {!secureTextEntry && icon && <span style={{ padding: '0 12px', display: 'flex', alignItems: 'center' }}>{icon}</span>}
+        {!secureTextEntry && icon && <span className={styles.iconWrapper}>{icon}</span>}
       </div>
       {resolvedError && resolvedErrorText && (
-        <div role="alert" style={{ color: colors.red, fontSize: 12, marginTop: 4 }}>
+        <div role="alert" className={styles.errorText}>
           {resolvedErrorText}
         </div>
       )}

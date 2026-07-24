@@ -1,0 +1,112 @@
+/**
+ * Genuinely cross-cutting layout primitives — used identically by 2+
+ * unrelated components/screens, so giving each one its own private copy
+ * would be duplication, not separation of concerns. Everything else lives
+ * in the CSS Module of the single component that owns it.
+ *
+ * Import explicitly where needed:
+ *   import p from '../../styles/primitives.module.css';
+ *   <section className={p.card}>
+ */
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  margin: 12px 0;
+}
+
+.card h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: var(--teal);
+}
+
+.field {
+  display: block;
+  margin: 12px 0;
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.fieldHint {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.req {
+  color: var(--red);
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10px;
+  align-items: start;
+}
+
+/* grey context (read-only) block — the workbook's grey columns */
+.contextGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.contextItem {
+  background: #1a2438;
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.contextLabel {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.contextValue {
+  font-size: 15px;
+}
+
+.warn {
+  color: var(--amber);
+  font-size: 14px;
+}
+
+.toast {
+  background: #064e3b;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 15px;
+}
+
+.errorText {
+  color: #fca5a5;
+  font-size: 13px;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+}
+
+.btnCol {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.center {
+  text-align: center;
+}

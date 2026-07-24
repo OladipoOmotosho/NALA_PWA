@@ -13,10 +13,16 @@
  *  - useRetaylButtonProps and RetaylButtonContent weren't included in the
  *    files handed over; this component reconstructs their behavior from
  *    how RetaylButton.tsx consumed them, simplified for our single platform.
+ *
+ * Styling: variant/size are finite enums, expressed as CSS Module modifier
+ * classes (Button.module.css) — nothing here is computed at runtime, so
+ * there's no inline style at all besides whatever a caller passes through
+ * `style`/`className` (e.g. CaptureScreen's `flex: 1` in its action bar).
  */
 import { type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { Loader2 } from 'lucide-react';
-import { colors, minTouchTarget, radius, transition } from './theme';
+import { cx } from './cx';
+import styles from './Button.module.css';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'danger';
 export type ButtonSize = 'md' | 'sm';
@@ -34,18 +40,6 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
   fullWidth?: boolean;
 }
 
-const VARIANT_STYLE: Record<ButtonVariant, { bg: string; text: string; border?: string }> = {
-  primary: { bg: colors.teal, text: '#04211d' },
-  secondary: { bg: 'transparent', text: colors.text, border: colors.line },
-  tertiary: { bg: colors.card, text: colors.muted },
-  danger: { bg: '#7f1d1d', text: '#fff' },
-};
-
-const SIZE_STYLE: Record<ButtonSize, { minHeight: number; padding: string; fontSize: number }> = {
-  md: { minHeight: minTouchTarget, padding: '10px 18px', fontSize: 16 },
-  sm: { minHeight: 40, padding: '6px 14px', fontSize: 14 },
-};
-
 export function Button({
   variant = 'primary',
   size = 'md',
@@ -55,36 +49,16 @@ export function Button({
   rightIcon,
   fullWidth = false,
   children,
-  style,
+  className,
   ...rest
 }: ButtonProps) {
-  const v = VARIANT_STYLE[variant];
-  const s = SIZE_STYLE[size];
   const isDisabled = disabled || loading;
 
   return (
     <button
       type="button"
       disabled={isDisabled}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 8,
-        minHeight: s.minHeight,
-        width: fullWidth ? '100%' : undefined,
-        padding: s.padding,
-        borderRadius: radius.lg,
-        border: `1px solid ${v.border ?? v.bg}`,
-        background: v.bg,
-        color: v.text,
-        fontSize: s.fontSize,
-        fontWeight: 600,
-        cursor: isDisabled ? 'not-allowed' : 'pointer',
-        opacity: isDisabled ? 0.5 : 1,
-        transition: `opacity ${transition.fast}`,
-        ...style,
-      }}
+      className={cx(styles.button, styles[variant], styles[size], fullWidth && styles.fullWidth, className)}
       {...rest}
     >
       {loading ? <Loader2 size={16} className="ui-spin" /> : leftIcon}

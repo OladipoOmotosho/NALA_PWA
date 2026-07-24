@@ -1,0 +1,99 @@
+.container {
+  width: 100%;
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.label {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.label.error {
+  color: var(--red);
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--input-bg);
+  transition: border-color 120ms ease;
+}
+
+.wrapper.multiline {
+  align-items: flex-start;
+}
+
+.wrapper.focused {
+  border-color: var(--teal);
+}
+
+.wrapper.error {
+  border-color: var(--red);
+}
+
+.wrapper.disabled {
+  background: var(--card);
+  opacity: 0.6;
+}
+
+.prefix {
+  padding: 0 10px;
+  border-right: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.suffix {
+  padding: 0 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.input {
+  flex: 1;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 16px;
+  width: 100%;
+}
+
+.input.multiline {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.input.disabled {
+  color: var(--muted);
+}
+
+.toggleButton {
+  background: none;
+  border: none;
+  color: var(--muted);
+  padding: 0 12px;
+  cursor: pointer;
+}
+
+.iconWrapper {
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+}
+
+.errorText {
+  color: var(--red);
+  font-size: 12px;
+  margin-top: 4px;
+}

@@ -5,6 +5,8 @@ import { CaptureScreen } from './screens/CaptureScreen';
 import { RecordsHubScreen } from './screens/RecordsHubScreen';
 import { startEngine } from './sync/engine';
 import { requestPersistentStorage } from './db/storage';
+import { cx } from './ui/cx';
+import styles from './App.module.css';
 
 /** Two screens total (field-usability decision 2026-07-24): capture, and a
  * records hub that folds in sync diagnostics + settings as collapsibles. */
@@ -28,10 +30,10 @@ export default function App() {
   };
 
   return (
-    <div className="app">
+    <div className={styles.app}>
       <SyncBanner />
       <UpdatePrompt />
-      <main className="content">
+      <main className={styles.content}>
         {tab === 'capture' && (
           <CaptureScreen
             key={editRecordId ?? `new-${captureKey}`}
@@ -51,11 +53,15 @@ export default function App() {
           />
         )}
       </main>
-      <nav className="tabbar">
-        <button type="button" className={tab === 'capture' ? 'tab active' : 'tab'} onClick={newCapture}>
+      <nav className={styles.tabbar}>
+        <button type="button" className={cx(styles.tab, tab === 'capture' && styles.tabActive)} onClick={newCapture}>
           ➕ New Inspection
         </button>
-        <button type="button" className={tab === 'records' ? 'tab active' : 'tab'} onClick={() => setTab('records')}>
+        <button
+          type="button"
+          className={cx(styles.tab, tab === 'records' && styles.tabActive)}
+          onClick={() => setTab('records')}
+        >
           📋 Records
         </button>
       </nav>

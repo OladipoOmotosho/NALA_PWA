@@ -23,9 +23,11 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { AlertTriangle, Check, Info, X } from 'lucide-react';
-import { colors, radius, spacing, zIndex } from './theme';
+import { colors } from './theme';
 import { Button, type ButtonVariant } from './Button';
 import { Text } from './Text';
+import { cx } from './cx';
+import styles from './Modal.module.css';
 
 export type ModalVariant = 'success' | 'error' | 'warning' | 'info' | 'confirmation' | 'custom';
 
@@ -51,7 +53,11 @@ export interface ModalProps {
   showCloseButton?: boolean;
 }
 
-const SIZE_WIDTH: Record<NonNullable<ModalProps['size']>, number> = { sm: 360, md: 480, lg: 640 };
+const SIZE_CLASS: Record<NonNullable<ModalProps['size']>, string> = {
+  sm: styles.sizeSm,
+  md: styles.sizeMd,
+  lg: styles.sizeLg,
+};
 
 const VARIANT_ICON: Partial<Record<ModalVariant, ReactNode>> = {
   success: <Check size={22} color="#04211d" />,
@@ -61,12 +67,13 @@ const VARIANT_ICON: Partial<Record<ModalVariant, ReactNode>> = {
   info: <Info size={22} color="#fff" />,
 };
 
-const VARIANT_ICON_BG: Partial<Record<ModalVariant, string>> = {
-  success: colors.teal,
-  error: colors.red,
-  warning: colors.amber,
-  confirmation: colors.amber,
-  info: colors.muted,
+const VARIANT_ICON_BG_CLASS: Record<ModalVariant, string> = {
+  success: styles.iconSuccess,
+  error: styles.iconError,
+  warning: styles.iconWarning,
+  confirmation: styles.iconConfirmation,
+  info: styles.iconInfo,
+  custom: styles.iconCustom,
 };
 
 function useModalLifecycle(isVisible: boolean, onClose: () => void, closeOnEscape: boolean) {
@@ -121,7 +128,7 @@ export function Modal({
   if (!isVisible || !portalEl) return null;
 
   const icon = VARIANT_ICON[variant];
-  const iconBg = VARIANT_ICON_BG[variant] ?? colors.card;
+  const iconBgClass = VARIANT_ICON_BG_CLASS[variant];
 
   return createPortal(
     <div
@@ -129,68 +136,19 @@ export function Modal({
       aria-modal="true"
       aria-label={title}
       onClick={() => closeOnOverlayClick && onClose()}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: spacing.lg,
-        background: colors.overlay,
-        zIndex: zIndex.modal,
-        opacity: entered ? 1 : 0,
-        transition: 'opacity 150ms ease',
-      }}
+      className={cx(styles.overlay, entered && styles.overlayEntered)}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        style={{
-          position: 'relative',
-          width: '100%',
-          maxWidth: SIZE_WIDTH[size],
-          maxHeight: '90vh',
-          overflow: 'auto',
-          background: colors.card,
-          border: `1px solid ${colors.line}`,
-          borderRadius: radius.xl,
-          padding: spacing.xl,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: spacing.md,
-          transform: entered ? 'scale(1)' : 'scale(0.96)',
-          transition: 'transform 150ms ease',
-        }}
+        className={cx(styles.dialog, SIZE_CLASS[size], entered && styles.dialogEntered)}
       >
         {showCloseButton && (
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            style={{
-              position: 'absolute',
-              top: spacing.md,
-              right: spacing.md,
-              background: 'none',
-              border: 'none',
-              color: colors.muted,
-              cursor: 'pointer',
-            }}
-          >
+          <button type="button" onClick={onClose} aria-label="Close" className={styles.closeButton}>
             <X size={18} />
           </button>
         )}
         {icon && (
-          <div
-            style={{
-              width: 48,
-              height: 48,
-              borderRadius: '50%',
-              background: iconBg,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
+          <div className={cx(styles.iconWrap, iconBgClass)}>
             {icon}
           </div>
         )}
@@ -202,7 +160,7 @@ export function Modal({
         {message && typeof message === 'string' ? <Text color={colors.muted}>{message}</Text> : message}
         {children}
         {(primaryButton || secondaryButton) && (
-          <div style={{ display: 'flex', gap: spacing.sm, justifyContent: 'flex-end', marginTop: spacing.sm }}>
+          <div className={styles.footer}>
             {secondaryButton && (
               <Button variant={secondaryButton.variant ?? 'secondary'} onClick={secondaryButton.onPress} disabled={secondaryButton.disabled}>
                 {secondaryButton.text}

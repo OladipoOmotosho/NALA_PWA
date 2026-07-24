@@ -1,0 +1,13 @@
+.text {
+  margin: 0;
+}
+
+.block {
+  display: block;
+}
+
+.clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

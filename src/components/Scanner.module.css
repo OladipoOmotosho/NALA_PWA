@@ -1,0 +1,41 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.frame {
+  position: relative;
+  width: min(70vw, 320px);
+  aspect-ratio: 1;
+  border: 3px solid var(--teal);
+  border-radius: 16px;
+}
+
+.error {
+  position: relative;
+  color: #fff;
+  background: rgb(0 0 0 / 70%);
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin: 12px;
+  text-align: center;
+}
+
+.close {
+  position: absolute;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+}

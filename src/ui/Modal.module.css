@@ -1,0 +1,95 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: var(--overlay);
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.overlayEntered {
+  opacity: 1;
+}
+
+.dialog {
+  position: relative;
+  width: 100%;
+  max-height: 90vh;
+  overflow: auto;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transform: scale(0.96);
+  transition: transform 150ms ease;
+}
+
+.dialogEntered {
+  transform: scale(1);
+}
+
+.sizeSm {
+  max-width: 360px;
+}
+
+.sizeMd {
+  max-width: 480px;
+}
+
+.sizeLg {
+  max-width: 640px;
+}
+
+.closeButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.iconWrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconSuccess {
+  background: var(--teal);
+}
+
+.iconError {
+  background: var(--red);
+}
+
+.iconWarning,
+.iconConfirmation {
+  background: var(--amber);
+}
+
+.iconInfo {
+  background: var(--muted);
+}
+
+.iconCustom {
+  background: var(--card);
+}
+
+.footer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}

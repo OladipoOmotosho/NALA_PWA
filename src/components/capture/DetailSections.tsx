@@ -5,6 +5,7 @@ import { CONSEQUENCE_LEVELS, LIKELIHOOD_LEVELS } from '../../domain/riskMatrix';
 import { Select, YesNo } from '../fields';
 import { TextInput } from '../../ui/TextInput';
 import { FieldReferenceHelper } from './FieldReferenceHelper';
+import p from '../../styles/primitives.module.css';
 
 export type SetField = <K extends keyof Submission>(key: K, value: Submission[K]) => void;
 
@@ -15,12 +16,12 @@ interface SectionProps {
 
 export function VisitSection({ form, set }: SectionProps) {
   return (
-    <section className="card">
+    <section className={p.card}>
       <h2>Visit details</h2>
-      <div className="grid-2">
-        <label className="field">
-          <span className="field-label">
-            Inspection Date<span className="req"> *</span>
+      <div className={p.grid2}>
+        <label className={p.field}>
+          <span className={p.fieldLabel}>
+            Inspection Date<span className={p.req}> *</span>
           </span>
           <input type="date" value={form.inspectionDate} onChange={(e) => set('inspectionDate', e.target.value)} />
         </label>
@@ -31,7 +32,7 @@ export function VisitSection({ form, set }: SectionProps) {
           onChangeText={(v) => set('inspectorName', v)}
         />
       </div>
-      <div className="grid-2">
+      <div className={p.grid2}>
         <YesNo label="PPE Requirements Met" value={form.ppeRequirementsMet} onChange={(v) => set('ppeRequirementsMet', v)} />
         <TextInput
           fieldLabel="Equipment Type"
@@ -48,9 +49,9 @@ export function VisitSection({ form, set }: SectionProps) {
 export function ComponentSection({ form, set }: SectionProps) {
   const componentType = COMPONENT_TYPES.find((c) => c.name === form.componentType);
   return (
-    <section className="card">
+    <section className={p.card}>
       <h2>Component</h2>
-      <div className="grid-2">
+      <div className={p.grid2}>
         <Select
           label="Component Type"
           required
@@ -77,9 +78,9 @@ export function ComponentSection({ form, set }: SectionProps) {
 export function DeficiencySection({ form, set }: SectionProps) {
   const category = DEFICIENCY_CATEGORIES.find((c) => c.label === form.deficiencyCategory);
   return (
-    <section className="card">
+    <section className={p.card}>
       <h2>Deficiency</h2>
-      <p className="field-hint">Choose the Deficiency Category first — it filters the three lists below.</p>
+      <p className={p.fieldHint}>Choose the Deficiency Category first — it filters the three lists below.</p>
       <Select
         label="Deficiency Category"
         required
@@ -93,7 +94,7 @@ export function DeficiencySection({ form, set }: SectionProps) {
           set('focusArea', '');
         }}
       />
-      {category?.definition && <p className="field-hint">{category.definition}</p>}
+      {category?.definition && <p className={p.fieldHint}>{category.definition}</p>}
       <Select
         label="Detailed Description"
         required
@@ -101,7 +102,7 @@ export function DeficiencySection({ form, set }: SectionProps) {
         options={category?.descriptions ?? []}
         onChange={(v) => set('detailedDescription', v)}
       />
-      <div className="grid-2">
+      <div className={p.grid2}>
         <Select label="Mechanism" value={form.mechanism} options={category?.mechanisms ?? []} onChange={(v) => set('mechanism', v)} />
         <Select label="Focus Area" value={form.focusArea} options={category?.focusAreas ?? []} onChange={(v) => set('focusArea', v)} />
       </div>
@@ -113,9 +114,9 @@ export function DeficiencySection({ form, set }: SectionProps) {
 
 export function RiskPrioritySection({ form, derived, set }: SectionProps & { derived: Submission }) {
   return (
-    <section className="card">
+    <section className={p.card}>
       <h2>Risk &amp; priority</h2>
-      <div className="grid-2">
+      <div className={p.grid2}>
         <Select
           label="Consequence Severity"
           required
@@ -137,14 +138,14 @@ export function RiskPrioritySection({ form, derived, set }: SectionProps & { der
         options={[...RISK_LEVELS]}
         onChange={(v) => set('mostAffectedConsequence', v as Submission['mostAffectedConsequence'])}
       />
-      <div className="context-grid">
-        <div className="context-item">
-          <span className="context-label">Risk Rank (matrix)</span>
-          <span className="context-value">{derived.riskRank ?? '—'}</span>
+      <div className={p.contextGrid}>
+        <div className={p.contextItem}>
+          <span className={p.contextLabel}>Risk Rank (matrix)</span>
+          <span className={p.contextValue}>{derived.riskRank ?? '—'}</span>
         </div>
-        <div className="context-item">
-          <span className="context-label">Risk Rating</span>
-          <span className="context-value">{derived.riskRating || '—'}</span>
+        <div className={p.contextItem}>
+          <span className={p.contextLabel}>Risk Rating</span>
+          <span className={p.contextValue}>{derived.riskRating || '—'}</span>
         </div>
       </div>
       <Select
@@ -156,9 +157,9 @@ export function RiskPrioritySection({ form, derived, set }: SectionProps & { der
         placeholder="Auto-assigned"
         hint="Assigned by the Glencore matrix from Consequence × Likelihood (P1: 20–25 · P2: 15–19 · P3: 10–14 · P4: 5–9 · P5: 1–4)."
       />
-      <div className="context-item">
-        <span className="context-label">Priority Description (derived)</span>
-        <span className="context-value">{derived.priorityDescription || '—'}</span>
+      <div className={p.contextItem}>
+        <span className={p.contextLabel}>Priority Description (derived)</span>
+        <span className={p.contextValue}>{derived.priorityDescription || '—'}</span>
       </div>
     </section>
   );
@@ -166,7 +167,7 @@ export function RiskPrioritySection({ form, derived, set }: SectionProps & { der
 
 export function ActionsSection({ form, derived, set }: SectionProps & { derived: Submission }) {
   return (
-    <section className="card">
+    <section className={p.card}>
       <h2>Actions</h2>
       <TextInput
         fieldLabel="Recommended Action"
@@ -181,7 +182,7 @@ export function ActionsSection({ form, derived, set }: SectionProps & { derived:
         disabled={derived.priorityRating === 'P1'}
         hint={derived.priorityRating === 'P1' ? 'Forced to Yes for P1.' : undefined}
       />
-      <div className="grid-2">
+      <div className={p.grid2}>
         <YesNo
           label="Further Investigation Required"
           value={form.furtherInvestigationRequired}

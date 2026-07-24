@@ -9,6 +9,8 @@ import { Button } from '../../ui/Button';
 import { TextInput } from '../../ui/TextInput';
 import { Autocomplete } from '../../ui/Autocomplete';
 import type { SetField } from './DetailSections';
+import p from '../../styles/primitives.module.css';
+import styles from './AssetSection.module.css';
 
 interface Props {
   form: Submission;
@@ -20,10 +22,10 @@ interface Props {
 
 export function AssetSection({ form, set, onResolve, onScan, onCopyForward }: Props) {
   return (
-    <section className="card">
+    <section className={p.card}>
       <h2>Asset</h2>
-      <div className="row">
-        <div className="grow">
+      <div className={styles.row}>
+        <div className={styles.grow}>
           <TextInput
             fieldLabel="Asset ID"
             required
@@ -36,9 +38,9 @@ export function AssetSection({ form, set, onResolve, onScan, onCopyForward }: Pr
         <Button onClick={onScan}>Scan</Button>
       </div>
       {form.assetUnresolved && form.assetTag && (
-        <p className="warn">Asset not in the local cache — saved as manual entry, flagged for server resolution.</p>
+        <p className={p.warn}>Asset not in the local cache — saved as manual entry, flagged for server resolution.</p>
       )}
-      <div className="grid-2">
+      <div className={p.grid2}>
         <Select label="Site" value={form.siteCode} options={SITES} onChange={(v) => set('siteCode', v)} />
         <Select
           label="Category"
@@ -47,7 +49,7 @@ export function AssetSection({ form, set, onResolve, onScan, onCopyForward }: Pr
           onChange={(v) => set('assetCategory', v)}
         />
       </div>
-      <div className="grid-2">
+      <div className={p.grid2}>
         <Autocomplete
           fieldLabel="Parent Asset"
           placeholder="e.g. Blower Building"
@@ -55,10 +57,10 @@ export function AssetSection({ form, set, onResolve, onScan, onCopyForward }: Pr
           onChangeText={(v) => set('parentAsset', v)}
           suggestions={FORM_OPTIONS.parentAssets}
         />
-        <div className="field">
-          <span className="field-label">Location</span>
-          <div className="context-item">
-            <span className="context-value">
+        <div className={p.field}>
+          <span className={p.fieldLabel}>Location</span>
+          <div className={p.contextItem}>
+            <span className={p.contextValue}>
               {form.locationSource === 'gps' ? `GPS ±${Math.round(form.gpsAccuracyM ?? 0)} m` : 'GPS unavailable'}
             </span>
           </div>

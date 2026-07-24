@@ -1,0 +1,31 @@
+.badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  color: var(--text);
+}
+
+.draft {
+  background: #334155;
+}
+
+.pending,
+.syncing {
+  background: #92400e;
+}
+
+.synced {
+  background: #065f46;
+}
+
+.failed {
+  background: #9a3412;
+}
+
+.failedPermanent,
+.conflict {
+  background: #7f1d1d;
+}
