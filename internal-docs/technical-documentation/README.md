@@ -37,7 +37,10 @@ Shared foundation, not components themselves:
 
 - `ui/theme.ts` — color/spacing/radius/font-size tokens, all backed by the
   CSS custom properties already defined in `src/styles.css`. Change a value
-  in one place, every component picks it up.
+  in one place, every component picks it up. Only genuinely dynamic/computed
+  JS values (portal positioning, SVG geometry, per-instance numeric props)
+  read from `theme.ts` directly now — everything else is a CSS class (see
+  "Styling" below).
 - Icons come from `lucide-react` directly (imported at each call site — no
   wrapper module). Originally a hand-rolled inline-SVG set (`ui/icons.tsx`)
   to avoid adding a dependency; Dipo asked to switch to lucide 2026-07-24
@@ -62,3 +65,42 @@ Shared foundation, not components themselves:
 - **Touch targets ≥ 48px**, per this app's existing PRD requirement
   (gloved, outdoor, one-handed use) — every interactive component respects
   `theme.minTouchTarget`.
+
+## Styling (2026-07-24 migration: CSS Modules, co-located)
+
+Every component and screen used to share one 500-line global `src/styles.css`
+grab-bag, with `ui/` components styled via inline style objects. Neither
+scaled — no separation of concerns, no atomicity, and a global stylesheet
+nobody could safely edit without grepping the whole app first. The fix:
+
+- **Every component/screen owns a co-located `*.module.css`** next to its
+  `.tsx` (`Button.tsx` + `Button.module.css`). Vite scopes the class names
+  automatically; import as `import styles from './Button.module.css'` and
+  reference `styles.foo`. Compose conditional/modifier classes with the tiny
+  `ui/cx.ts` helper — no `classnames`/`clsx` dependency.
+- **`src/styles.css` is global scope, intentionally minimal**: `:root` design
+  tokens (the CSS custom properties `theme.ts` reads) and the cross-browser
+  reset for bare native form controls (`fields.tsx`'s `<select>`, the
+  Inspection Date and hidden file `<input>`s — nothing else styles these
+  directly). Nothing else belongs there.
+- **Genuinely cross-cutting layout atoms** — used identically by 2+ unrelated
+  components (`.card`, `.field`, `.grid2`, `.toast`, …) — live in one
+  explicit `src/styles/primitives.module.css`, imported where needed. This is
+  the one deliberate exception to "co-located only": duplicating the same
+  card/field chrome into a dozen component-local files would be its own kind
+  of anti-pattern.
+- **Class names are camelCase**, not kebab-case (`fieldLabel`, not
+  `field-label`) — CSS Modules classes become JS object keys, and
+  `styles['field-label']` is worse than `styles.fieldLabel`.
+- **Genuinely dynamic values stay inline**: DOM-measured positions
+  (`getBoundingClientRect` for `Select`/`Autocomplete`/`Tooltip`'s portals),
+  SVG geometry (`Spinner`'s stroke-dashoffset math), and arbitrary
+  per-instance props (`Text`'s `size`/`color`) are the accepted exceptions —
+  everything else is a class.
+- **Enforced, not just documented** — CI runs `stylelint` (`yarn lint:css`)
+  with a rule that forbids any class selector in `src/styles.css` itself, so
+  the global file mechanically cannot regrow into a monolith. ESLint's
+  `max-lines` rule (300, per `.agent/ENGINEERING_PRACTICES.md`) applies to
+  every `.ts`/`.tsx` file for the same reason, with the regenerated
+  `domain/*.ts` data tables (taxonomy, lookups, …) explicitly excluded since
+  their size tracks the source workbook, not hand-authored complexity.
