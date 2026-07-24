@@ -28,6 +28,8 @@ import {
 import { PhotoSection } from '../components/capture/PhotoSection';
 import { triggerFlush } from '../sync/engine';
 import { Button } from '../ui/Button';
+import { cx } from '../ui/cx';
+import p from '../styles/primitives.module.css';
 
 interface Props {
   /** Resume an existing draft/record; undefined = new capture. */
@@ -67,7 +69,7 @@ export function CaptureScreen({ editRecordId, onDone }: Props) {
     setForm((f) => (f ? { ...f, [key]: value } : f));
   }, []);
 
-  if (!form) return <p className="muted">Loading…</p>;
+  if (!form) return <p className={p.muted}>Loading…</p>;
   const derived = applyDerived(form);
 
   const resolveAsset = async (tag: string) => {
@@ -147,7 +149,7 @@ export function CaptureScreen({ editRecordId, onDone }: Props) {
   };
 
   return (
-    <div className="capture">
+    <div>
       {scanning && (
         <Scanner
           onDetected={(v) => {
@@ -159,7 +161,7 @@ export function CaptureScreen({ editRecordId, onDone }: Props) {
       )}
 
       {derived.priorityRating === 'P1' && (
-        <div className="p1-banner" role="alert">
+        <div className="my-3 rounded-lg bg-red px-3.5 py-3 font-bold text-white" role="alert">
           P1 — CRITICAL. Immediate Site Notification is set to Yes. Call the site contact now.
         </div>
       )}
@@ -184,21 +186,23 @@ export function CaptureScreen({ editRecordId, onDone }: Props) {
       />
 
       {missing.length > 0 && (
-        <div className="validation-box" role="alert">
+        <div className="my-3 rounded-lg bg-[#7c2d12] px-3.5 py-3" role="alert">
           Required before submit: {missing.join(', ')}
         </div>
       )}
-      {toast && <div className="toast">{toast}</div>}
+      {toast && <div className={p.toast}>{toast}</div>}
 
-      <div className="actionbar">
-        <Button variant="secondary" style={{ flex: 1 }} onClick={() => void persist('draft')}>
+      <div className="my-4 flex gap-2.5">
+        <Button variant="secondary" className="flex-1" onClick={() => void persist('draft')}>
           Save draft
         </Button>
-        <Button style={{ flex: 1 }} onClick={() => void persist('pending')}>
+        <Button className="flex-1" onClick={() => void persist('pending')}>
           Save &amp; queue
         </Button>
       </div>
-      {savedAt && <p className="muted center">Saved locally at {new Date(savedAt).toLocaleTimeString()}</p>}
+      {savedAt && (
+        <p className={cx(p.muted, p.center)}>Saved locally at {new Date(savedAt).toLocaleTimeString()}</p>
+      )}
     </div>
   );
 }

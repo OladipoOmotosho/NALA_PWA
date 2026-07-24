@@ -21,7 +21,7 @@ export function UpdatePrompt() {
 
   if (!needRefresh) return null;
   return (
-    <div className="update-prompt" role="alert">
+    <div className="sticky top-0 z-25 flex items-center gap-2.5 bg-[#1e3a8a] px-3.5 py-2.5 text-[15px]" role="alert">
       <span>A new app version is ready.</span>
       <Button size="sm" onClick={() => void updateFn?.(true)}>
         Reload

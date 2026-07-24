@@ -18,8 +18,10 @@
  */
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { createPortal } from 'react-dom';
-import { colors, radius, transition, zIndex } from './theme';
+import { colors } from './theme';
 import { Search } from 'lucide-react';
+import { cx } from './cx';
+import styles from './Autocomplete.module.css';
 
 export interface AutocompleteProps {
   value: string;
@@ -94,14 +96,14 @@ export function Autocomplete({ value, onChangeText, suggestions, fieldLabel, pla
   };
 
   return (
-    <div ref={containerRef} style={{ width: '100%', position: 'relative' }}>
+    <div ref={containerRef} className={styles.container}>
       {fieldLabel && (
-        <label htmlFor={inputId} style={{ display: 'block', fontSize: 14, color: colors.muted, marginBottom: 6 }}>
+        <label htmlFor={inputId} className={styles.label}>
           {fieldLabel}
         </label>
       )}
-      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-        <Search size={14} color={colors.muted} style={{ position: 'absolute', left: 12 }} />
+      <div className={styles.inputRow}>
+        <Search size={14} color={colors.muted} className={styles.searchIcon} />
         <input
           id={inputId}
           type="text"
@@ -114,18 +116,7 @@ export function Autocomplete({ value, onChangeText, suggestions, fieldLabel, pla
           }}
           onFocus={openDropdown}
           onKeyDown={handleKeyDown}
-          style={{
-            width: '100%',
-            minHeight: 48,
-            padding: '10px 12px 10px 34px',
-            border: `1px solid ${colors.line}`,
-            borderRadius: radius.md,
-            background: disabled ? colors.card : '#0e1626',
-            color: colors.text,
-            fontSize: 15,
-            outline: 'none',
-            transition: `border-color ${transition.fast}`,
-          }}
+          className={cx(styles.input, disabled && styles.inputDisabled)}
         />
       </div>
       {open &&
@@ -134,19 +125,8 @@ export function Autocomplete({ value, onChangeText, suggestions, fieldLabel, pla
           <div
             ref={dropdownRef}
             role="listbox"
-            style={{
-              position: 'fixed',
-              top: position.top,
-              left: position.left,
-              width: position.width,
-              maxHeight: 240,
-              overflowY: 'auto',
-              background: '#0e1626',
-              border: `1px solid ${colors.line}`,
-              borderRadius: radius.lg,
-              boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
-              zIndex: zIndex.dropdown,
-            }}
+            className={styles.dropdown}
+            style={{ position: 'fixed', top: position.top, left: position.left, width: position.width }}
           >
             {filtered.map((s, i) => (
               <div
@@ -155,13 +135,7 @@ export function Autocomplete({ value, onChangeText, suggestions, fieldLabel, pla
                 aria-selected={i === hovered}
                 onMouseEnter={() => setHovered(i)}
                 onClick={() => select(s)}
-                style={{
-                  padding: '10px 12px',
-                  fontSize: 14,
-                  cursor: 'pointer',
-                  background: i === hovered ? 'rgba(20,184,166,0.1)' : 'transparent',
-                  color: colors.text,
-                }}
+                className={cx(styles.option, i === hovered && styles.optionHovered)}
               >
                 {s}
               </div>

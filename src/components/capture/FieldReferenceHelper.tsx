@@ -22,6 +22,7 @@ import {
 } from '../../domain/taxonomyQuery';
 import { Select } from '../fields';
 import { Button } from '../../ui/Button';
+import p from '../../styles/primitives.module.css';
 
 export function FieldReferenceHelper() {
   const [open, setOpen] = useState(false);
@@ -33,13 +34,13 @@ export function FieldReferenceHelper() {
   const leaf = taxonomyLeaf(category, equipmentType, component, subcomponent);
 
   return (
-    <div className="field-reference">
+    <div className="mt-3">
       <Button variant="secondary" size="sm" onClick={() => setOpen((v) => !v)}>
         {open ? 'Hide' : 'Need help identifying this?'} Field Reference
       </Button>
       {open && (
-        <div className="field-reference-panel">
-          <p className="field-hint">
+        <div className="mt-2.5 rounded-md border border-dashed border-line bg-[#1a2438] p-3">
+          <p className={p.fieldHint}>
             Guidance only — picks here are not saved on the inspection. Use them to help choose the Deficiency
             Category, Detailed Description, Mechanism and Focus Area above.
           </p>
@@ -80,14 +81,14 @@ export function FieldReferenceHelper() {
             onChange={setSubcomponent}
           />
           {leaf && (
-            <div className="context-grid">
-              <div className="context-item">
-                <span className="context-label">Suggested Focus Area</span>
-                <span className="context-value">{leaf.focusArea}</span>
+            <div className={p.contextGrid}>
+              <div className={p.contextItem}>
+                <span className={p.contextLabel}>Suggested Focus Area</span>
+                <span className={p.contextValue}>{leaf.focusArea}</span>
               </div>
-              <div className="context-item">
-                <span className="context-label">Suggested Mechanisms</span>
-                <span className="context-value">
+              <div className={p.contextItem}>
+                <span className={p.contextLabel}>Suggested Mechanisms</span>
+                <span className={p.contextValue}>
                   {leaf.mechanisms.map((m) => deficiencyByLabel(m)?.name ?? m).join(', ')}
                 </span>
               </div>

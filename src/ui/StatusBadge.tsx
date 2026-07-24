@@ -12,7 +12,8 @@
  * See internal-docs/technical-documentation/StatusBadge.md.
  */
 import type { SyncStatus } from '../domain/types';
-import { colors, radius } from './theme';
+import { cx } from './cx';
+import styles from './StatusBadge.module.css';
 
 const LABEL: Record<SyncStatus, string> = {
   draft: 'Draft',
@@ -24,35 +25,10 @@ const LABEL: Record<SyncStatus, string> = {
   conflict: 'Conflict',
 };
 
-const BACKGROUND: Record<SyncStatus, string> = {
-  draft: '#334155',
-  pending: '#92400e',
-  syncing: '#92400e',
-  synced: '#065f46',
-  failed: '#9a3412',
-  failedPermanent: '#7f1d1d',
-  conflict: '#7f1d1d',
-};
-
 export interface StatusBadgeProps {
   status: SyncStatus;
 }
 
 export function StatusBadge({ status }: StatusBadgeProps) {
-  return (
-    <span
-      style={{
-        display: 'inline-block',
-        fontSize: 12,
-        fontWeight: 700,
-        padding: '4px 10px',
-        borderRadius: radius.full,
-        whiteSpace: 'nowrap',
-        background: BACKGROUND[status],
-        color: colors.text,
-      }}
-    >
-      {LABEL[status]}
-    </span>
-  );
+  return <span className={cx(styles.badge, styles[status])}>{LABEL[status]}</span>;
 }

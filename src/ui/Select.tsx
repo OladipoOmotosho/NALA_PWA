@@ -34,7 +34,9 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronDown, Search } from 'lucide-react';
-import { colors, radius, transition, zIndex } from './theme';
+import { colors } from './theme';
+import { cx } from './cx';
+import styles from './Select.module.css';
 
 export interface SelectItem {
   label: string;
@@ -98,20 +100,12 @@ function DropdownPortal({
   return createPortal(
     <div
       ref={dropdownRef}
+      className={styles.dropdown}
       style={{
         position: 'fixed',
         top: position.top,
         left: position.left,
         width: position.width,
-        maxHeight: DROPDOWN_MAX_HEIGHT,
-        background: '#0e1626',
-        border: `1px solid ${colors.line}`,
-        borderRadius: radius.lg,
-        boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
-        zIndex: zIndex.dropdown,
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
       }}
     >
       {children}
@@ -183,9 +177,9 @@ export function Select({
   };
 
   return (
-    <div style={{ width: '100%' }}>
+    <div className={styles.wrapper}>
       {fieldLabel && (
-        <label style={{ display: 'block', fontSize: 14, color: error ? colors.red : colors.muted, marginBottom: 6 }}>
+        <label className={cx(styles.label, error && styles.labelError)}>
           {fieldLabel}
           {required && ' *'}
         </label>
@@ -204,69 +198,44 @@ export function Select({
             handleToggle();
           }
         }}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          minHeight: 48,
-          padding: '0 12px',
-          border: `1px solid ${error ? colors.red : open ? colors.teal : colors.line}`,
-          borderRadius: radius.md,
-          background: disabled ? colors.card : '#0e1626',
-          cursor: disabled || isLoading ? 'not-allowed' : 'pointer',
-          opacity: disabled ? 0.6 : 1,
-          transition: `border-color ${transition.fast}`,
-        }}
+        className={cx(
+          styles.trigger,
+          error && styles.triggerError,
+          !error && open && styles.triggerOpen,
+          disabled && styles.triggerDisabled,
+        )}
+        style={{ cursor: disabled || isLoading ? 'not-allowed' : 'pointer' }}
       >
-        <span style={{ color: selected ? colors.text : colors.muted, fontSize: 15 }}>
+        <span className={cx(styles.value, !selected && styles.valuePlaceholder)}>
           {isLoading ? 'Loading…' : (selected?.label ?? placeholder)}
         </span>
         {!isLoading && (
-          <ChevronDown
-            size={16}
-            color={colors.muted}
-            style={{ transform: open ? 'rotate(180deg)' : undefined, transition: `transform ${transition.fast}` }}
-          />
+          <ChevronDown size={16} color={colors.muted} className={cx(styles.chevron, open && styles.chevronOpen)} />
         )}
       </div>
       {error && errorMessage && (
-        <div role="alert" style={{ color: colors.red, fontSize: 12, marginTop: 4 }}>
+        <div role="alert" className={styles.errorMessage}>
           {errorMessage}
         </div>
       )}
       {open && (
         <DropdownPortal position={position} dropdownRef={dropdownRef}>
           {shouldShowSearch && (
-            <div style={{ padding: 8, borderBottom: `1px solid ${colors.line}`, position: 'relative' }}>
-              <Search
-                size={14}
-                color={colors.muted}
-                style={{ position: 'absolute', left: 18, top: '50%', transform: 'translateY(-50%)' }}
-              />
+            <div className={styles.searchBox}>
+              <Search size={14} color={colors.muted} className={styles.searchIcon} />
               <input
                 ref={searchRef}
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={searchPlaceholder}
-                style={{
-                  width: '100%',
-                  padding: '8px 8px 8px 28px',
-                  border: `1px solid ${colors.line}`,
-                  borderRadius: radius.sm,
-                  background: '#0b1220',
-                  color: colors.text,
-                  fontSize: 14,
-                  outline: 'none',
-                }}
+                className={styles.searchInput}
               />
             </div>
           )}
-          <div style={{ overflowY: 'auto', padding: '4px 0' }}>
+          <div className={styles.list}>
             {filtered.length === 0 ? (
-              <div style={{ padding: 16, textAlign: 'center', color: colors.muted, fontSize: 14 }}>
-                {query ? `No results for "${query}"` : 'No options'}
-              </div>
+              <div className={styles.empty}>{query ? `No results for "${query}"` : 'No options'}</div>
             ) : (
               filtered.map((item) => {
                 const isSelected = item.value === value;
@@ -278,13 +247,11 @@ export function Select({
                     onMouseEnter={() => setHovered(item.value)}
                     onMouseLeave={() => setHovered(null)}
                     onClick={() => handleSelect(item)}
-                    style={{
-                      padding: '10px 12px',
-                      fontSize: 14,
-                      color: isSelected ? colors.teal : colors.text,
-                      background: isSelected ? 'rgba(20,184,166,0.12)' : hovered === item.value ? 'rgba(20,184,166,0.06)' : 'transparent',
-                      cursor: 'pointer',
-                    }}
+                    className={cx(
+                      styles.option,
+                      !isSelected && hovered === item.value && styles.optionHovered,
+                      isSelected && styles.optionSelected,
+                    )}
                   >
                     {item.label}
                   </div>

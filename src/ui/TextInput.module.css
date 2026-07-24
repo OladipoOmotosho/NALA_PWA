@@ -1,0 +1,69 @@
+@reference '#styles.css';
+
+.container {
+  @apply w-full;
+}
+
+.labelRow {
+  @apply mb-1.5 flex items-center gap-1;
+}
+
+.label {
+  @apply text-sm text-muted;
+}
+
+.label.error {
+  @apply text-red;
+}
+
+.wrapper {
+  @apply flex items-center rounded-md border border-line bg-input-bg transition-colors duration-120 ease-[ease];
+}
+
+.wrapper.multiline {
+  @apply items-start;
+}
+
+.wrapper.focused {
+  @apply border-teal;
+}
+
+.wrapper.error {
+  @apply border-red;
+}
+
+.wrapper.disabled {
+  @apply bg-card opacity-60;
+}
+
+.prefix {
+  @apply border-r border-line px-2.5 text-[15px] text-muted;
+}
+
+.suffix {
+  @apply px-2.5 text-xs text-muted;
+}
+
+.input {
+  @apply w-full min-h-12 flex-1 border-none bg-transparent px-3 py-2.5 text-base text-text outline-none;
+}
+
+.input.multiline {
+  @apply min-h-24 resize-y;
+}
+
+.input.disabled {
+  @apply text-muted;
+}
+
+.toggleButton {
+  @apply cursor-pointer border-none bg-transparent px-3 text-muted;
+}
+
+.iconWrapper {
+  @apply flex items-center px-3;
+}
+
+.errorText {
+  @apply mt-1 text-xs text-red;
+}

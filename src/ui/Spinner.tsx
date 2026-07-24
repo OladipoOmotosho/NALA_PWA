@@ -4,9 +4,15 @@
  * than "CircularProgress", which implies a determinate percentage the rest
  * of this app never actually needs. The determinate `value` prop is kept
  * since the SVG math is identical either way and it costs nothing to retain.
+ *
+ * Styling: size, colors, and the stroke-dashoffset math are all genuinely
+ * per-instance dynamic values (arbitrary numbers, computed SVG geometry) —
+ * this stays inline, same treatment as Text's size/color. Only the static
+ * structural wrapper classes move to Spinner.module.css.
  */
 import { colors } from './theme';
 import { Text } from './Text';
+import styles from './Spinner.module.css';
 
 export interface SpinnerProps {
   /** Progress 0–100. Omit for an indeterminate spinner (continuous rotation). */
@@ -35,7 +41,7 @@ export function Spinner({
   const offset = circumference - (clamped / 100) * circumference;
 
   return (
-    <div style={{ position: 'relative', width: size, height: size, display: 'inline-flex' }}>
+    <div className={styles.wrapper} style={{ width: size, height: size }}>
       <svg
         width={size}
         height={size}
@@ -58,7 +64,7 @@ export function Spinner({
         />
       </svg>
       {showValue && !indeterminate && (
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className={styles.valueOverlay}>
           <Text size={14} weight="700">
             {label ?? `${Math.round(clamped)}%`}
           </Text>

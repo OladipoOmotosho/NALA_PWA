@@ -1,0 +1,89 @@
+@reference '#styles.css';
+
+.wrapper {
+  @apply w-full;
+}
+
+.label {
+  @apply mb-1.5 block text-sm text-muted;
+}
+
+.labelError {
+  @apply text-red;
+}
+
+.trigger {
+  @apply flex min-h-12 cursor-pointer items-center justify-between rounded-md border border-line bg-input-bg px-3 opacity-100 transition-colors duration-150 ease-[ease];
+}
+
+.triggerOpen {
+  @apply border-teal;
+}
+
+.triggerError {
+  @apply border-red;
+}
+
+.triggerDisabled {
+  @apply cursor-not-allowed bg-card opacity-60;
+}
+
+.value {
+  @apply text-[15px] text-text;
+}
+
+.valuePlaceholder {
+  @apply text-muted;
+}
+
+.chevron {
+  @apply transition-transform duration-150 ease-[ease];
+}
+
+.chevronOpen {
+  @apply rotate-180;
+}
+
+.errorMessage {
+  @apply mt-1 text-xs text-red;
+}
+
+.dropdown {
+  @apply z-60 flex max-h-75 flex-col overflow-hidden rounded-lg border border-line bg-input-bg shadow-[0_8px_32px_rgba(0,0,0,0.35)];
+}
+
+.searchBox {
+  @apply relative border-b border-line p-2;
+}
+
+.searchIcon {
+  @apply absolute left-4.5 top-1/2 -translate-y-1/2;
+}
+
+.searchInput {
+  @apply w-full rounded-sm border border-line bg-bg py-2 pl-7 pr-2 text-sm text-text outline-none;
+}
+
+.searchInput:focus-visible {
+  @apply border-teal outline-2 outline-teal outline-offset-1;
+}
+
+.list {
+  @apply overflow-y-auto py-1;
+}
+
+.empty {
+  @apply p-4 text-center text-sm text-muted;
+}
+
+.option {
+  @apply cursor-pointer bg-transparent px-3 py-2.5 text-sm text-text;
+}
+
+.optionHovered {
+  @apply bg-teal/6;
+}
+
+.optionSelected {
+  @apply bg-teal/12 text-teal;
+}

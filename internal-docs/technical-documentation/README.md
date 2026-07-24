@@ -35,9 +35,14 @@ original file: what it became, or why it was left out.
 
 Shared foundation, not components themselves:
 
-- `ui/theme.ts` — color/spacing/radius/font-size tokens, all backed by the
-  CSS custom properties already defined in `src/styles.css`. Change a value
-  in one place, every component picks it up.
+- `ui/theme.ts` — the JS-side mirror of `src/styles.css`'s CSS custom
+  properties (`colors`), plus the small `spacing`/`fontSize`/`zIndex` scales.
+  Only genuinely dynamic/computed JS values (portal positioning, SVG
+  geometry, per-instance numeric props/defaults) read from `theme.ts` now —
+  everything else is a Tailwind utility class (see "Styling" below).
+  `radius`, `minTouchTarget`, and `transition` were removed once nothing
+  referenced them anymore (radius now lives in `styles.css`'s `@theme`
+  block instead).
 - Icons come from `lucide-react` directly (imported at each call site — no
   wrapper module). Originally a hand-rolled inline-SVG set (`ui/icons.tsx`)
   to avoid adding a dependency; Dipo asked to switch to lucide 2026-07-24
@@ -59,6 +64,119 @@ Shared foundation, not components themselves:
 - **One runtime dependency: `lucide-react`** (icons). Everything else —dates,
   portals, positioning— is either a browser API (`react-dom`'s
   `createPortal`, `getBoundingClientRect`) or hand-rolled.
-- **Touch targets ≥ 48px**, per this app's existing PRD requirement
-  (gloved, outdoor, one-handed use) — every interactive component respects
-  `theme.minTouchTarget`.
+- **Touch targets ≥ 48px by default**, per this app's existing PRD
+  requirement (gloved, outdoor, one-handed use) — every interactive
+  component's default size is `min-h-12`/`min-w-12` (48px) in its own
+  `*.module.css`. The one documented exception is `Button`'s `size="sm"`
+  (40px), a deliberate opt-in for dense contexts (see [Button.md](./Button.md));
+  reach for it only where that tradeoff is explicitly warranted, never as
+  the default.
+
+## Styling
+
+Three migrations, layered on top of each other, all still in force:
+
+**2026-07-24, CSS Modules, co-located.** Every component and screen used to
+share one 500-line global `src/styles.css` grab-bag, with `ui/` components
+styled via inline style objects. Neither scaled — no separation of concerns,
+no atomicity, and a global stylesheet nobody could safely edit without
+grepping the whole app first. Fix: every component/screen owned a co-located
+`*.module.css` next to its `.tsx`. Genuinely cross-cutting layout atoms used
+identically by 2+ unrelated components (`.card`, `.field`, `.grid2`,
+`.toast`, …) moved into one explicit `src/styles/primitives.module.css`
+instead of being duplicated — the one deliberate exception to "co-located
+only", and it's the one piece of this migration every screen still uses.
+
+**2026-07-24, Tailwind installed, coupled in via `@apply`.** Every
+`*.module.css` file's declarations were rewritten as Tailwind utility
+classes composed with `@apply` rather than hand-written CSS properties —
+same files, same co-location; only the vocabulary *inside* each rule
+changed.
+
+**2026-07-24, split: `ui/` keeps `@apply`, screens/app components went
+inline.** In practice, wholesale `@apply` fought Tailwind's own design
+— its docs recommend `@apply` only for extracting genuinely repeated
+utility combinations, not as a blanket replacement for hand-written CSS.
+Hiding utilities behind a class name in a separate file loses Tailwind's
+actual selling points (styles visible right where they're used, editor
+autocomplete/class-sorting) while still paying the `@reference` boilerplate
+and the CSS-Modules-isolation footgun below. Landing spot:
+
+- **`ui/*.tsx` + `ui/*.module.css` (and `src/styles/primitives.module.css`)
+  keep `@apply`.** Each is the one authoritative place its variants are
+  defined — `Button.module.css` shows every variant/size together, a
+  reader doesn't have to hunt through conditionals in `Button.tsx` to find
+  them. Class names stay camelCase (`fieldLabel`, not `field-label`) since
+  they become JS object keys.
+- **Every screen and `components/*` file (`App.tsx`, `screens/*`,
+  `components/*`) uses Tailwind utility classNames directly in JSX**, no
+  co-located `.module.css`. These are one-off layouts, not reused variants,
+  so Tailwind's colocation is a genuine win here: `className="flex
+  items-center gap-2.5"` is visible right at the call site. Compose
+  conditional classes with the shared `ui/cx.ts` helper
+  (`cx('...', isOpen && '...')`); a literal string gets pulled into a local
+  `const` only when the exact same class list repeats more than once in one
+  file (see `fields.tsx`'s `SEG_BASE`/`SEG_ACTIVE`).
+- **Descendant/pseudo-element selectors become Tailwind variants at the
+  usage site.** `RecordsHubScreen`'s collapse chevron used to be
+  `.collapse[open] > summary::after { transform: rotate(90deg) }`; inline,
+  the `<details>` gets `className="group ..."` and the `<summary>` gets
+  `after:content-['▸'] group-open:after:rotate-90` — Tailwind's `group-*`
+  variant reacts to an ancestor's state (here, `<details>`'s `open`
+  attribute) without a hand-written selector.
+
+```tsx
+// Tooltip.tsx (ui/ — stays @apply)
+<span className={styles.trigger}>
+
+// RecordsScreen.tsx (screen — inline)
+<div className="my-2.5 rounded-xl border border-line bg-card px-3.5 py-3">
+```
+
+Mechanics that still apply wherever `@apply` is used (`ui/`,
+`primitives.module.css`):
+
+- **`@reference '#styles.css';` is required at the top of every file that
+  uses `@apply`.** Tailwind v4 compiles each CSS Modules file in isolation,
+  so without it `@apply` can't see this app's `@theme` mapping (or even
+  Tailwind's own utilities) and the build fails loudly — "Cannot apply
+  unknown utility class". `#styles.css` is a Node subpath import
+  (`package.json`'s `imports` field, pointing at `src/styles.css`) rather
+  than a relative path, so it's identical in every file regardless of
+  nesting depth.
+- **`src/styles.css`'s `@theme inline { ... }` block maps this app's own
+  design tokens into Tailwind's theme** — `--color-teal: var(--teal)`, etc. —
+  so `bg-teal`, `text-muted`, `border-line` resolve to this app's own CSS
+  custom properties everywhere, `@apply` or inline, not Tailwind's stock
+  palette. The `--radius-*` scale is overridden outright (not extended) so
+  `rounded-sm/md/lg/xl` mean exactly what they meant pre-Tailwind
+  (8/10/12/14px). One source of truth either way: change a value in
+  `:root`, every usage picks it up.
+- **Arbitrary values (`px-[14px]`, `bg-[#1a2438]`) are expected, not a
+  smell** — this app's spacing/radius/color values predate Tailwind and
+  don't all land on its default scale. Prefer the canonical scale step when
+  one exists (`gap-2.5` over `gap-[10px]`; Tailwind's spacing scale
+  includes half-steps down to 2px) and fall back to brackets when it
+  doesn't.
+- **`src/styles.css` is still global scope, intentionally minimal**: the
+  `@import 'tailwindcss'`, the `@theme` mapping, `:root` tokens, and the
+  cross-browser reset for bare native form controls (`fields.tsx`'s
+  `<select>`, the Inspection Date and hidden file `<input>`s). It also
+  restores default `<p>` spacing that Tailwind's Preflight reset zeroes,
+  since most bare paragraphs in this app don't carry their own spacing
+  class. Nothing else belongs there.
+- **Genuinely dynamic values stay inline as `style`, not as a class,
+  anywhere in the app**: DOM-measured positions (`getBoundingClientRect`
+  for `Select`/`Autocomplete`/`Tooltip`'s portals), SVG geometry
+  (`Spinner`'s stroke-dashoffset math), and arbitrary per-instance props
+  (`Text`'s `size`/`color`) are the accepted exceptions.
+- **Enforced, not just documented** — CI runs `stylelint` (`yarn lint:css`)
+  with a rule that forbids any class selector in `src/styles.css` itself, so
+  the global file mechanically cannot regrow into a monolith. ESLint's
+  `max-lines` rule (300, per `.agent/ENGINEERING_PRACTICES.md`) applies to
+  every `.ts`/`.tsx` file for the same reason, with the regenerated
+  `domain/*.ts` data tables (taxonomy, lookups, …) explicitly excluded since
+  their size tracks the source workbook, not hand-authored complexity.
+  stylelint's `import-notation` rule is pinned to `"string"` (not the
+  standard config's default `"url"`) because Tailwind specifically expects
+  `@import 'tailwindcss';` as a bare string.

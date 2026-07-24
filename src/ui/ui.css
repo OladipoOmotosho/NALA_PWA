@@ -4,6 +4,7 @@
     transform: rotate(360deg);
   }
 }
+
 .ui-spin {
   animation: ui-spin 0.8s linear infinite;
 }

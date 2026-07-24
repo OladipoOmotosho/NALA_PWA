@@ -6,8 +6,9 @@
  * fit this app's 48px-minimum touch target convention (PRD §9.5).
  */
 import { Check } from 'lucide-react';
-import { colors, minTouchTarget, radius, transition } from './theme';
+import { cx } from './cx';
 import { Text } from './Text';
+import styles from './Checkbox.module.css';
 
 export interface CheckboxProps {
   label?: string;
@@ -19,46 +20,17 @@ export interface CheckboxProps {
 
 export function Checkbox({ label, checked, onChange, disabled = false, ...aria }: CheckboxProps) {
   return (
-    <label
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 10,
-        minHeight: minTouchTarget,
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        opacity: disabled ? 0.5 : 1,
-      }}
-    >
+    <label className={cx(styles.label, disabled && styles.disabled)}>
       <input
         type="checkbox"
         checked={checked}
         disabled={disabled}
         onChange={(e) => onChange(e.target.checked)}
         aria-label={aria['aria-label'] ?? label}
-        style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
+        className={styles.hiddenInput}
       />
-      <span
-        aria-hidden="true"
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: 24,
-          height: 24,
-          borderRadius: radius.sm,
-          border: `1.5px solid ${checked ? colors.teal : colors.line}`,
-          background: checked ? colors.teal : 'transparent',
-          transition: `background ${transition.fast}, border-color ${transition.fast}`,
-        }}
-      >
-        <span
-          style={{
-            display: 'inline-flex',
-            transform: checked ? 'scale(1)' : 'scale(0)',
-            transition: `transform ${transition.fast}`,
-            color: '#04211d',
-          }}
-        >
+      <span aria-hidden="true" className={cx(styles.box, checked && styles.checked)}>
+        <span className={cx(styles.check, checked && styles.checked)}>
           <Check size={14} />
         </span>
       </span>

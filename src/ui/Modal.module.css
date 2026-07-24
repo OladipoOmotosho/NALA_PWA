@@ -1,0 +1,62 @@
+@reference '#styles.css';
+
+.overlay {
+  @apply fixed inset-0 z-100 flex items-center justify-center bg-overlay p-4 opacity-0 transition-opacity duration-150 ease-[ease];
+}
+
+.overlayEntered {
+  @apply opacity-100;
+}
+
+.dialog {
+  @apply relative flex w-full max-h-[90vh] scale-96 flex-col gap-3 overflow-auto rounded-xl border border-line bg-card p-6 transition-transform duration-150 ease-[ease];
+}
+
+.dialogEntered {
+  @apply scale-100;
+}
+
+.sizeSm {
+  @apply max-w-90;
+}
+
+.sizeMd {
+  @apply max-w-120;
+}
+
+.sizeLg {
+  @apply max-w-160;
+}
+
+.closeButton {
+  @apply absolute right-3 top-3 cursor-pointer border-none bg-transparent text-muted;
+}
+
+.iconWrap {
+  @apply flex size-12 items-center justify-center rounded-full;
+}
+
+.iconSuccess {
+  @apply bg-teal;
+}
+
+.iconError {
+  @apply bg-red;
+}
+
+.iconWarning,
+.iconConfirmation {
+  @apply bg-amber;
+}
+
+.iconInfo {
+  @apply bg-muted;
+}
+
+.iconCustom {
+  @apply bg-card;
+}
+
+.footer {
+  @apply mt-2 flex justify-end gap-2;
+}

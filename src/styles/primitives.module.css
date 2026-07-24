@@ -1,0 +1,92 @@
+/**
+ * Genuinely cross-cutting layout primitives — used identically by 2+
+ * unrelated components/screens, so giving each one its own private copy
+ * would be duplication, not separation of concerns. Everything else lives
+ * in the CSS Module of the single component that owns it.
+ *
+ * Written with Tailwind's @apply against the @theme mapping in styles.css
+ * (bg-card/text-muted/etc. resolve to this app's own CSS custom properties,
+ * not Tailwind's stock palette). Values with no clean match on Tailwind's
+ * default scale (this app predates Tailwind, so plenty don't) use arbitrary
+ * bracket syntax — that's expected here, not a smell.
+ *
+ * Import explicitly where needed:
+ *   import p from '../../styles/primitives.module.css';
+ *   <section className={p.card}>
+ */
+@reference '#styles.css';
+
+.card {
+  @apply my-3 rounded-xl border border-line bg-card p-[14px];
+}
+
+.card h2 {
+  @apply mb-[10px] text-[18px] text-teal;
+}
+
+/* margin-bottom only (not my-3): this doubles as a grid-2 cell, and a
+ * top margin here — but not on TextInput/Autocomplete's own wrapper,
+ * which carry none — pushes just this cell down within the row and
+ * throws off the side-by-side alignment. Adjoining margin-bottom already
+ * collapses against the next field's (absent) top margin in normal block
+ * flow, so standalone stacking spacing is unchanged. */
+.field {
+  @apply mb-3 block;
+}
+
+.fieldLabel {
+  @apply mb-[6px] block text-sm text-muted;
+}
+
+.fieldHint {
+  @apply mt-[6px] block text-[13px] text-muted;
+}
+
+.req {
+  @apply text-red;
+}
+
+.grid2 {
+  @apply grid grid-cols-2 items-start gap-x-[10px];
+}
+
+/* grey context (read-only) block — the workbook's grey columns */
+.contextGrid {
+  @apply my-3 grid grid-cols-2 gap-2;
+}
+
+.contextItem {
+  @apply rounded-md bg-[#1a2438] px-[10px] py-2;
+}
+
+.contextLabel {
+  @apply block text-xs text-muted;
+}
+
+.contextValue {
+  @apply text-[15px];
+}
+
+.warn {
+  @apply text-sm text-amber;
+}
+
+.toast {
+  @apply my-3 rounded-lg bg-[#064e3b] px-[14px] py-[10px] text-[15px];
+}
+
+.errorText {
+  @apply mt-[6px] text-[13px] text-[#fca5a5] [overflow-wrap:anywhere];
+}
+
+.btnCol {
+  @apply flex flex-col gap-[10px];
+}
+
+.muted {
+  @apply text-muted;
+}
+
+.center {
+  @apply text-center;
+}

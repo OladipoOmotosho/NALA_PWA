@@ -5,6 +5,7 @@ import { addPhoto, listPhotos, removePhoto, updatePhotoDescription, MAX_PHOTOS_P
 import type { PhotoRow } from '../../domain/types';
 import { Button } from '../../ui/Button';
 import { TextInput } from '../../ui/TextInput';
+import p from '../../styles/primitives.module.css';
 
 function PhotoThumb({ photo, onRemove }: { photo: PhotoRow; onRemove: () => void }) {
   const [url, setUrl] = useState<string | null>(null);
@@ -19,11 +20,16 @@ function PhotoThumb({ photo, onRemove }: { photo: PhotoRow; onRemove: () => void
   }, [photo.blob]);
 
   return (
-    <figure className="photo-thumb">
-      {url && <img src={url} alt={photo.filename} />}
+    <figure className="relative m-0">
+      {url && <img src={url} alt={photo.filename} className="aspect-square w-full rounded-md object-cover" />}
       {/* Small circular overlay control — kept native; ui/Button's fixed
        * padding/min-height doesn't fit this layered icon-only affordance. */}
-      <button type="button" className="photo-remove" aria-label="Remove photo" onClick={onRemove}>
+      <button
+        type="button"
+        className="absolute right-1 top-1 size-8 rounded-full border-none bg-black/70 text-lg text-white"
+        aria-label="Remove photo"
+        onClick={onRemove}
+      >
         ×
       </button>
       <TextInput
@@ -70,10 +76,10 @@ export function PhotoSection({ clientRecordId, ensurePersisted, onMessage, onCou
   };
 
   return (
-    <section className="card">
+    <section className={p.card}>
       <h2>
         Photos{' '}
-        <span className="muted">
+        <span className={p.muted}>
           ({photos.length}/{MAX_PHOTOS_PER_RECORD})
         </span>
       </h2>
@@ -87,9 +93,9 @@ export function PhotoSection({ clientRecordId, ensurePersisted, onMessage, onCou
         onChange={(e) => void onPicked(e.target.files)}
       />
       <Button onClick={() => fileInputRef.current?.click()}>Add photo</Button>
-      <div className="photo-grid">
-        {photos.map((p) => (
-          <PhotoThumb key={p.photoId} photo={p} onRemove={() => void removePhoto(p.photoId)} />
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        {photos.map((photo) => (
+          <PhotoThumb key={photo.photoId} photo={photo} onRemove={() => void removePhoto(photo.photoId)} />
         ))}
       </div>
     </section>

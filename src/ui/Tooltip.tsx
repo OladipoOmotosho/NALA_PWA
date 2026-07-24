@@ -9,7 +9,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { Info } from 'lucide-react';
-import { colors, radius, spacing, zIndex } from './theme';
+import { colors, spacing, zIndex } from './theme';
+import styles from './Tooltip.module.css';
 
 export interface TooltipProps {
   message: string;
@@ -75,22 +76,16 @@ export function Tooltip({ message, title, children, ...aria }: TooltipProps) {
         onMouseLeave={() => setVisible(false)}
         onFocus={() => setVisible(true)}
         onBlur={() => setVisible(false)}
-        style={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer' }}
+        className={styles.trigger}
       >
         {children ?? <Info size={16} color={colors.muted} />}
       </span>
       {visible && position && tooltipStyle
         ? createPortal(
             <div style={tooltipStyle} role="tooltip">
-              <div
-                style={{
-                  background: '#141233',
-                  borderRadius: radius.md,
-                  padding: '8px 12px',
-                }}
-              >
-                {title && <div style={{ fontSize: 12, fontWeight: 600, color: '#fff', marginBottom: 2 }}>{title}</div>}
-                <div style={{ fontSize: 12, color: '#fff' }}>{message}</div>
+              <div className={styles.content}>
+                {title && <div className={styles.title}>{title}</div>}
+                <div className={styles.message}>{message}</div>
               </div>
             </div>,
             document.body,

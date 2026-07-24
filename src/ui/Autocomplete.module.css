@@ -1,0 +1,41 @@
+@reference '#styles.css';
+
+.container {
+  @apply relative w-full;
+}
+
+.label {
+  @apply mb-1.5 block text-sm text-muted;
+}
+
+.inputRow {
+  @apply relative flex items-center;
+}
+
+.searchIcon {
+  @apply absolute left-3;
+}
+
+.input {
+  @apply w-full min-h-12 rounded-md border border-line bg-input-bg py-2.5 pl-8.5 pr-3 text-[15px] text-text outline-none transition-colors duration-120 ease-[ease];
+}
+
+.input:focus-visible {
+  @apply border-teal outline-2 outline-teal outline-offset-1;
+}
+
+.inputDisabled {
+  @apply bg-card;
+}
+
+.dropdown {
+  @apply z-60 max-h-60 overflow-y-auto rounded-lg border border-line bg-input-bg shadow-[0_8px_32px_rgba(0,0,0,0.35)];
+}
+
+.option {
+  @apply cursor-pointer bg-transparent px-3 py-2.5 text-sm text-text;
+}
+
+.optionHovered {
+  @apply bg-teal/10;
+}

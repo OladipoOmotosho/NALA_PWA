@@ -1,4 +1,9 @@
 /** Shared form controls: gloves-friendly Yes/No segmented control and labelled select. */
+import { cx } from '../ui/cx';
+import p from '../styles/primitives.module.css';
+
+const SEG_BASE = 'min-h-12 flex-1 rounded-md border border-line bg-input-bg text-base text-text disabled:opacity-60';
+const SEG_ACTIVE = 'border-teal bg-teal-dark font-bold';
 
 export function YesNo({
   label,
@@ -14,12 +19,12 @@ export function YesNo({
   hint?: string;
 }) {
   return (
-    <div className="field">
-      <span className="field-label">{label}</span>
-      <div className="segmented" role="radiogroup" aria-label={label}>
+    <div className={p.field}>
+      <span className={p.fieldLabel}>{label}</span>
+      <div className="flex gap-2" role="radiogroup" aria-label={label}>
         <button
           type="button"
-          className={value === true ? 'seg active' : 'seg'}
+          className={cx(SEG_BASE, value === true && SEG_ACTIVE)}
           disabled={disabled}
           onClick={() => onChange(true)}
         >
@@ -27,14 +32,14 @@ export function YesNo({
         </button>
         <button
           type="button"
-          className={value === false ? 'seg active' : 'seg'}
+          className={cx(SEG_BASE, value === false && SEG_ACTIVE)}
           disabled={disabled}
           onClick={() => onChange(false)}
         >
           No
         </button>
       </div>
-      {hint && <span className="field-hint">{hint}</span>}
+      {hint && <span className={p.fieldHint}>{hint}</span>}
     </div>
   );
 }
@@ -59,10 +64,10 @@ export function Select({
   placeholder?: string;
 }) {
   return (
-    <label className="field">
-      <span className="field-label">
+    <label className={p.field}>
+      <span className={p.fieldLabel}>
         {label}
-        {required && <span className="req"> *</span>}
+        {required && <span className={p.req}> *</span>}
       </span>
       <select value={value} disabled={disabled} onChange={(e) => onChange(e.target.value)}>
         <option value="">{placeholder}</option>
@@ -72,7 +77,7 @@ export function Select({
           </option>
         ))}
       </select>
-      {hint && <span className="field-hint">{hint}</span>}
+      {hint && <span className={p.fieldHint}>{hint}</span>}
     </label>
   );
 }

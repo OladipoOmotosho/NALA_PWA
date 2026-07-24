@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { getMeta, setMeta } from '../db/meta';
 import { TextInput } from '../ui/TextInput';
 import { Button } from '../ui/Button';
+import p from '../styles/primitives.module.css';
 
 export function SettingsScreen() {
   const [backendUrl, setBackendUrl] = useState('');
@@ -38,8 +39,8 @@ export function SettingsScreen() {
   };
 
   return (
-    <div className="settings">
-      <section className="card">
+    <div>
+      <section className={p.card}>
         <h2>Backend</h2>
         <TextInput
           fieldLabel="Backend URL (n8n webhook base)"
@@ -51,7 +52,7 @@ export function SettingsScreen() {
         <TextInput fieldLabel="Bearer token" secureTextEntry value={token} onChangeText={setToken} />
       </section>
 
-      <section className="card">
+      <section className={p.card}>
         <h2>Identity</h2>
         <TextInput fieldLabel="Engineer email" inputMode="email" value={engineerEmail} onChangeText={setEngineerEmail} />
         <TextInput
@@ -61,19 +62,19 @@ export function SettingsScreen() {
         />
       </section>
 
-      <section className="card">
+      <section className={p.card}>
         <h2>Device</h2>
-        <p className="muted">
+        <p className={p.muted}>
           Persistent storage:{' '}
           {persisted === null ? 'unknown' : persisted ? 'granted — data protected from eviction' : 'not granted (best-effort)'}
         </p>
-        <div className="btn-col">
+        <div className={p.btnCol}>
           <Button onClick={() => void save()}>Save settings</Button>
           <Button variant="secondary" onClick={() => void logout()}>
             Log out (clear token)
           </Button>
         </div>
-        {saved && <p className="toast">Settings saved.</p>}
+        {saved && <p className={p.toast}>Settings saved.</p>}
       </section>
     </div>
   );

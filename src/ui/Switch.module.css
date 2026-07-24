@@ -1,0 +1,21 @@
+@reference '#styles.css';
+
+.track {
+  @apply relative h-7 w-12 min-h-7 shrink-0 cursor-pointer rounded-xl border-none bg-line p-0 transition-colors duration-150 ease-[ease];
+}
+
+.track.checked {
+  @apply bg-teal;
+}
+
+.track:disabled {
+  @apply cursor-not-allowed opacity-50;
+}
+
+.thumb {
+  @apply absolute left-[3px] top-[3px] size-5.5 rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.3)] transition-[left] duration-150 ease-[ease];
+}
+
+.thumb.checked {
+  @apply left-[23px];
+}

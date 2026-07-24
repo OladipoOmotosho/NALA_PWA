@@ -90,11 +90,15 @@ export function Scanner({ onDetected, onClose }: Props) {
   }, [onDetected]);
 
   return (
-    <div className="scanner-overlay">
-      <video ref={videoRef} playsInline muted className="scanner-video" />
-      <div className="scanner-frame" />
-      {error && <p className="scanner-error">{error}</p>}
-      <Button variant="secondary" className="scanner-close" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black">
+      <video ref={videoRef} playsInline muted className="absolute inset-0 h-full w-full object-cover" />
+      <div className="relative aspect-square w-[min(70vw,320px)] rounded-2xl border-[3px] border-teal" />
+      {error && <p className="relative m-3 rounded-md bg-black/70 px-3.5 py-2.5 text-center text-white">{error}</p>}
+      <Button
+        variant="secondary"
+        className="absolute bottom-[calc(24px+env(safe-area-inset-bottom))]"
+        onClick={onClose}
+      >
         Cancel scan
       </Button>
     </div>

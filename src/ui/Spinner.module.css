@@ -1,0 +1,9 @@
+@reference '#styles.css';
+
+.wrapper {
+  @apply relative inline-flex;
+}
+
+.valueOverlay {
+  @apply absolute inset-0 flex items-center justify-center;
+}

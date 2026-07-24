@@ -9,6 +9,7 @@ import { triggerFlush, syncAssets } from '../sync/engine';
 import { Button } from '../ui/Button';
 import { StatusBadge } from '../ui/StatusBadge';
 import { Modal } from '../ui/Modal';
+import p from '../styles/primitives.module.css';
 
 const PURGE_DAYS = 30;
 
@@ -63,47 +64,47 @@ export function DiagnosticsScreen() {
   };
 
   return (
-    <div className="diagnostics">
-      <section className="card">
+    <div>
+      <section className={p.card}>
         <h2>Storage</h2>
         {storage && storage.quota > 0 ? (
           <>
             <p>
               {formatBytes(storage.usage)} of {formatBytes(storage.quota)} used ({Math.round(storage.fraction * 100)}%)
             </p>
-            {storage.fraction > 0.8 && <p className="warn">Over 80% — new photo capture is blocked.</p>}
+            {storage.fraction > 0.8 && <p className={p.warn}>Over 80% — new photo capture is blocked.</p>}
           </>
         ) : (
-          <p className="muted">Storage estimate unavailable.</p>
+          <p className={p.muted}>Storage estimate unavailable.</p>
         )}
         {counts && (
-          <p className="muted">
+          <p className={p.muted}>
             {counts.total} records ({counts.synced} synced, {counts.deleted} discarded) · {counts.photos} photos (
             {counts.photosPending} awaiting upload) · {counts.assets} cached assets
           </p>
         )}
-        <p className="muted">
+        <p className={p.muted}>
           Last flush: {lastFlushAt ? new Date(lastFlushAt).toLocaleString() : 'never'} · Asset cache:{' '}
           {lastAssetSyncAt ? new Date(lastAssetSyncAt).toLocaleString() : 'never synced'}
         </p>
       </section>
 
-      <section className="card">
+      <section className={p.card}>
         <h2>Queue ({queue.length})</h2>
-        {queue.length === 0 && <p className="muted">Queue empty — everything synced.</p>}
+        {queue.length === 0 && <p className={p.muted}>Queue empty — everything synced.</p>}
         {queue.map((r) => (
-          <div key={r.clientRecordId} className="queue-row">
-            <span className="mono">#{r.submissionSequence}</span> <strong>{r.assetTag || '(no asset)'}</strong>{' '}
+          <div key={r.clientRecordId} className="border-b border-line py-2 text-[15px]">
+            <span className="font-mono text-muted">#{r.submissionSequence}</span> <strong>{r.assetTag || '(no asset)'}</strong>{' '}
             <StatusBadge status={r.syncStatus} />
-            <span className="muted"> attempts: {r.attemptCount}</span>
-            {r.lastError && <div className="record-error">{r.lastError}</div>}
+            <span className={p.muted}> attempts: {r.attemptCount}</span>
+            {r.lastError && <div className={p.errorText}>{r.lastError}</div>}
           </div>
         ))}
       </section>
 
-      <section className="card">
+      <section className={p.card}>
         <h2>Actions</h2>
-        <div className="btn-col">
+        <div className={p.btnCol}>
           <Button onClick={() => void retryFailed()}>Retry failed now</Button>
           <Button onClick={() => void refreshAssets()}>Refresh asset cache</Button>
           <Button variant="secondary" onClick={() => void exportJson()}>
@@ -113,7 +114,7 @@ export function DiagnosticsScreen() {
             Purge synced &gt; {PURGE_DAYS} days
           </Button>
         </div>
-        {message && <p className="toast">{message}</p>}
+        {message && <p className={p.toast}>{message}</p>}
       </section>
 
       <Modal

@@ -1,0 +1,27 @@
+@reference '#styles.css';
+
+.badge {
+  @apply inline-block whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold text-text;
+}
+
+.draft {
+  @apply bg-[#334155];
+}
+
+.pending,
+.syncing {
+  @apply bg-[#92400e];
+}
+
+.synced {
+  @apply bg-[#065f46];
+}
+
+.failed {
+  @apply bg-[#9a3412];
+}
+
+.failedPermanent,
+.conflict {
+  @apply bg-[#7f1d1d];
+}
