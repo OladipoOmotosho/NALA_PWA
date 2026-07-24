@@ -143,6 +143,14 @@ textarea:focus {
   flex: 1;
 }
 
+/* compact two-column field rows — short fields don't need full width */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10px;
+  align-items: start;
+}
+
 /* grey context (read-only) block — the workbook's grey columns */
 .context-grid {
   display: grid;

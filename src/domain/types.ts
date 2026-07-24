@@ -1,6 +1,8 @@
 import type { PriorityRating, RiskLevel } from './lookups';
+import type { ConsequenceLevel, LikelihoodLevel } from './riskMatrix';
 
-export const SCHEMA_VERSION = 1;
+/** v2: Glencore 5×5 matrix — consequence 1–5, likelihood A–E, rank 1–25, priority auto-assigned. */
+export const SCHEMA_VERSION = 2;
 
 export type SyncStatus =
   | 'draft'
@@ -57,18 +59,18 @@ export interface Submission {
   detailedDescription: string;
   mechanism: string;
   vibrationPresent: boolean | null;
-  consequenceSeverity: RiskLevel | '';
+  consequenceSeverity: ConsequenceLevel | ''; // 5 Catastrophic → 1 Negligible
   mostAffectedConsequence: RiskLevel | '';
-  priorityRating: PriorityRating | '';
+  priorityRating: PriorityRating | ''; // derived from Risk Rank (Glencore bands), never hand-picked
   priorityDescription: string; // derived, never hand-typed
   recommendedAction: string;
   immediateSiteNotification: boolean | null;
   furtherInvestigationRequired: boolean | null;
   ndtRequired: boolean | null;
   focusArea: string;
-  likelihood: RiskLevel | '';
-  riskRank: number | null; // derived 1–9
-  riskRating: RiskLevel | ''; // derived
+  likelihood: LikelihoodLevel | ''; // A Almost Certain → E Rare
+  riskRank: number | null; // derived 1–25 from the matrix
+  riskRating: RiskLevel | ''; // derived: High 17–25, Medium 7–16, Low 1–6
 }
 
 /** One row = one photo, mirroring the workbook Photo_Register: Date Taken,

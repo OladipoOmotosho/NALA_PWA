@@ -1,7 +1,7 @@
 import { db } from './db';
 import { getMeta, nextSequence, getDeviceId, detectPlatform } from './meta';
 import { SCHEMA_VERSION, type Submission } from '../domain/types';
-import { priorityDescription, riskRank, riskRating } from '../domain/derive';
+import { priorityDescription, priorityFromRank, riskRank, riskRating } from '../domain/derive';
 
 export const APP_VERSION = '0.1.0';
 
@@ -69,7 +69,8 @@ export async function newSubmission(): Promise<Submission> {
   };
 }
 
-/** Required before Submit (Dataverse spec §4.3 rule set). Drafts may be incomplete. */
+/** Required user inputs before Submit (Dataverse spec §4.3 rule set, minus
+ * Priority Rating, which the Glencore matrix now assigns). Drafts may be incomplete. */
 export function validateForSubmit(s: Submission): string[] {
   const missing: string[] = [];
   if (!s.assetTag.trim()) missing.push('Asset ID');
@@ -80,18 +81,20 @@ export function validateForSubmit(s: Submission): string[] {
   if (!s.detailedDescription) missing.push('Detailed Description');
   if (!s.consequenceSeverity) missing.push('Consequence Severity');
   if (!s.likelihood) missing.push('Likelihood');
-  if (!s.priorityRating) missing.push('Priority Rating');
   return missing;
 }
 
-/** Apply derived fields (never hand-typed): priority description, risk rank/rating, P1 rule. */
+/** Apply derived fields (never hand-typed): risk rank/rating and priority from
+ * the Glencore matrix, priority description, P1 rule. */
 export function applyDerived(s: Submission): Submission {
   const rank = riskRank(s.consequenceSeverity, s.likelihood);
+  const priority = priorityFromRank(rank);
   const out: Submission = {
     ...s,
-    priorityDescription: priorityDescription(s.priorityRating),
     riskRank: rank,
     riskRating: riskRating(rank),
+    priorityRating: priority,
+    priorityDescription: priorityDescription(priority),
   };
   if (out.priorityRating === 'P1') out.immediateSiteNotification = true; // forced, spec §4.3
   return out;

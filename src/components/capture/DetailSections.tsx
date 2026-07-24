@@ -1,6 +1,7 @@
 /** Visit, Component, Deficiency, Risk & priority, and Actions sections (spec §4.2 layout). */
 import type { Submission } from '../../domain/types';
 import { COMPONENT_TYPES, DEFICIENCY_CATEGORIES, PRIORITIES, RISK_LEVELS } from '../../domain/lookups';
+import { CONSEQUENCE_LEVELS, LIKELIHOOD_LEVELS } from '../../domain/riskMatrix';
 import { Select, YesNo } from '../fields';
 
 export type SetField = <K extends keyof Submission>(key: K, value: Submission[K]) => void;
@@ -105,42 +106,46 @@ export function RiskPrioritySection({ form, derived, set }: SectionProps & { der
   return (
     <section className="card">
       <h2>Risk &amp; priority</h2>
-      <Select
-        label="Consequence Severity"
-        required
-        value={form.consequenceSeverity}
-        options={[...RISK_LEVELS]}
-        onChange={(v) => set('consequenceSeverity', v as Submission['consequenceSeverity'])}
-      />
+      <div className="grid-2">
+        <Select
+          label="Consequence Severity"
+          required
+          value={form.consequenceSeverity}
+          options={[...CONSEQUENCE_LEVELS]}
+          onChange={(v) => set('consequenceSeverity', v as Submission['consequenceSeverity'])}
+        />
+        <Select
+          label="Likelihood"
+          required
+          value={form.likelihood}
+          options={[...LIKELIHOOD_LEVELS]}
+          onChange={(v) => set('likelihood', v as Submission['likelihood'])}
+        />
+      </div>
       <Select
         label="Most-Affected Consequence"
         value={form.mostAffectedConsequence}
         options={[...RISK_LEVELS]}
         onChange={(v) => set('mostAffectedConsequence', v as Submission['mostAffectedConsequence'])}
       />
-      <Select
-        label="Likelihood"
-        required
-        value={form.likelihood}
-        options={[...RISK_LEVELS]}
-        onChange={(v) => set('likelihood', v as Submission['likelihood'])}
-      />
       <div className="context-grid">
         <div className="context-item">
-          <span className="context-label">Risk Rank (derived)</span>
+          <span className="context-label">Risk Rank (matrix)</span>
           <span className="context-value">{derived.riskRank ?? '—'}</span>
         </div>
         <div className="context-item">
-          <span className="context-label">Risk Rating (derived)</span>
+          <span className="context-label">Risk Rating</span>
           <span className="context-value">{derived.riskRating || '—'}</span>
         </div>
       </div>
       <Select
         label="Priority Rating"
-        required
-        value={form.priorityRating}
+        disabled
+        value={derived.priorityRating}
         options={[...PRIORITIES]}
-        onChange={(v) => set('priorityRating', v as Submission['priorityRating'])}
+        onChange={() => undefined}
+        placeholder="Auto-assigned"
+        hint="Assigned by the Glencore matrix from Consequence × Likelihood (P1: 20–25 · P2: 15–19 · P3: 10–14 · P4: 5–9 · P5: 1–4)."
       />
       <div className="context-item">
         <span className="context-label">Priority Description (derived)</span>
