@@ -3,6 +3,7 @@ import type { Submission } from '../../domain/types';
 import { COMPONENT_TYPES, DEFICIENCY_CATEGORIES, PRIORITIES, RISK_LEVELS } from '../../domain/lookups';
 import { CONSEQUENCE_LEVELS, LIKELIHOOD_LEVELS } from '../../domain/riskMatrix';
 import { Select, YesNo } from '../fields';
+import { TextInput } from '../../ui/TextInput';
 import { FieldReferenceHelper } from './FieldReferenceHelper';
 
 export type SetField = <K extends keyof Submission>(key: K, value: Submission[K]) => void;
@@ -23,24 +24,22 @@ export function VisitSection({ form, set }: SectionProps) {
           </span>
           <input type="date" value={form.inspectionDate} onChange={(e) => set('inspectionDate', e.target.value)} />
         </label>
-        <label className="field">
-          <span className="field-label">
-            Inspector Name<span className="req"> *</span>
-          </span>
-          <input type="text" value={form.inspectorName} onChange={(e) => set('inspectorName', e.target.value)} />
-        </label>
+        <TextInput
+          fieldLabel="Inspector Name"
+          required
+          value={form.inspectorName}
+          onChangeText={(v) => set('inspectorName', v)}
+        />
       </div>
       <div className="grid-2">
         <YesNo label="PPE Requirements Met" value={form.ppeRequirementsMet} onChange={(v) => set('ppeRequirementsMet', v)} />
-        <label className="field">
-          <span className="field-label">Equipment Type</span>
-          <input
-            type="text"
-            value={form.equipmentType}
-            placeholder="Free text"
-            onChange={(e) => set('equipmentType', e.target.value)}
-          />
-        </label>
+        <TextInput
+          fieldLabel="Equipment Type"
+          placeholder="Free text"
+          value={form.equipmentType}
+          onChangeText={(v) => set('equipmentType', v)}
+          infoMessage="Free text — the workbook's Yes/No validation on this column was a template defect."
+        />
       </div>
     </section>
   );
@@ -169,10 +168,12 @@ export function ActionsSection({ form, derived, set }: SectionProps & { derived:
   return (
     <section className="card">
       <h2>Actions</h2>
-      <label className="field">
-        <span className="field-label">Recommended Action</span>
-        <textarea rows={3} value={form.recommendedAction} onChange={(e) => set('recommendedAction', e.target.value)} />
-      </label>
+      <TextInput
+        fieldLabel="Recommended Action"
+        multiline
+        value={form.recommendedAction}
+        onChangeText={(v) => set('recommendedAction', v)}
+      />
       <YesNo
         label="Immediate Site Notification"
         value={derived.immediateSiteNotification}

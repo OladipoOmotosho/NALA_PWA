@@ -1,6 +1,7 @@
 /** QR/barcode scan (PRD §7.5): native BarcodeDetector where available, zxing fallback (iOS). */
 import { useEffect, useRef, useState } from 'react';
 import { log } from '../util/log';
+import { Button } from '../ui/Button';
 
 interface Props {
   onDetected: (value: string) => void;
@@ -93,9 +94,9 @@ export function Scanner({ onDetected, onClose }: Props) {
       <video ref={videoRef} playsInline muted className="scanner-video" />
       <div className="scanner-frame" />
       {error && <p className="scanner-error">{error}</p>}
-      <button type="button" className="btn btn-secondary scanner-close" onClick={onClose}>
+      <Button variant="secondary" className="scanner-close" onClick={onClose}>
         Cancel scan
-      </button>
+      </Button>
     </div>
   );
 }

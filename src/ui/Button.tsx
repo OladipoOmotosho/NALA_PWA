@@ -19,9 +19,14 @@ import { colors, minTouchTarget, radius, transition } from './theme';
 import { SpinnerIcon } from './icons';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'danger';
+export type ButtonSize = 'md' | 'sm';
 
 export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'color'> {
   variant?: ButtonVariant;
+  /** 'sm' drops below the 48px touch-target minimum — reserve for secondary,
+   * low-frequency actions (e.g. a per-record "Edit" in a dense list), never
+   * for the primary action on a screen. */
+  size?: ButtonSize;
   loading?: boolean;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
@@ -36,8 +41,14 @@ const VARIANT_STYLE: Record<ButtonVariant, { bg: string; text: string; border?: 
   danger: { bg: '#7f1d1d', text: '#fff' },
 };
 
+const SIZE_STYLE: Record<ButtonSize, { minHeight: number; padding: string; fontSize: number }> = {
+  md: { minHeight: minTouchTarget, padding: '10px 18px', fontSize: 16 },
+  sm: { minHeight: 40, padding: '6px 14px', fontSize: 14 },
+};
+
 export function Button({
   variant = 'primary',
+  size = 'md',
   loading = false,
   disabled = false,
   leftIcon,
@@ -48,6 +59,7 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const v = VARIANT_STYLE[variant];
+  const s = SIZE_STYLE[size];
   const isDisabled = disabled || loading;
 
   return (
@@ -59,14 +71,14 @@ export function Button({
         alignItems: 'center',
         justifyContent: 'center',
         gap: 8,
-        minHeight: minTouchTarget,
+        minHeight: s.minHeight,
         width: fullWidth ? '100%' : undefined,
-        padding: '10px 18px',
+        padding: s.padding,
         borderRadius: radius.lg,
         border: `1px solid ${v.border ?? v.bg}`,
         background: v.bg,
         color: v.text,
-        fontSize: 16,
+        fontSize: s.fontSize,
         fontWeight: 600,
         cursor: isDisabled ? 'not-allowed' : 'pointer',
         opacity: isDisabled ? 0.5 : 1,

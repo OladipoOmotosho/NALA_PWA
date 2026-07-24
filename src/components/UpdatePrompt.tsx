@@ -1,6 +1,7 @@
 /** SW update flow (PRD §7.1): prompt to reload, never silently swap mid-capture. */
 import { useEffect, useState } from 'react';
 import { registerSW } from 'virtual:pwa-register';
+import { Button } from '../ui/Button';
 
 let updateFn: ((reload?: boolean) => Promise<void>) | null = null;
 
@@ -22,12 +23,12 @@ export function UpdatePrompt() {
   return (
     <div className="update-prompt" role="alert">
       <span>A new app version is ready.</span>
-      <button type="button" className="btn btn-small" onClick={() => void updateFn?.(true)}>
+      <Button size="sm" onClick={() => void updateFn?.(true)}>
         Reload
-      </button>
-      <button type="button" className="btn btn-small btn-secondary" onClick={() => setNeedRefresh(false)}>
+      </Button>
+      <Button size="sm" variant="secondary" onClick={() => setNeedRefresh(false)}>
         Later
-      </button>
+      </Button>
     </div>
   );
 }

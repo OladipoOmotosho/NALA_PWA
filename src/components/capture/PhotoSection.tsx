@@ -3,9 +3,15 @@ import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { addPhoto, listPhotos, removePhoto, updatePhotoDescription, MAX_PHOTOS_PER_RECORD } from '../../util/photos';
 import type { PhotoRow } from '../../domain/types';
+import { Button } from '../../ui/Button';
+import { TextInput } from '../../ui/TextInput';
 
 function PhotoThumb({ photo, onRemove }: { photo: PhotoRow; onRemove: () => void }) {
   const [url, setUrl] = useState<string | null>(null);
+  // Local, seeded from the stored description; persisted on blur only (each
+  // save re-queues the photo for upload — not something to do per keystroke).
+  const [description, setDescription] = useState(photo.photoDescription);
+
   useEffect(() => {
     const u = URL.createObjectURL(photo.blob);
     setUrl(u);
@@ -15,16 +21,17 @@ function PhotoThumb({ photo, onRemove }: { photo: PhotoRow; onRemove: () => void
   return (
     <figure className="photo-thumb">
       {url && <img src={url} alt={photo.filename} />}
+      {/* Small circular overlay control — kept native; ui/Button's fixed
+       * padding/min-height doesn't fit this layered icon-only affordance. */}
       <button type="button" className="photo-remove" aria-label="Remove photo" onClick={onRemove}>
         ×
       </button>
-      <input
-        type="text"
-        className="photo-desc"
+      <TextInput
         placeholder="Description…"
         aria-label="Photo description"
-        defaultValue={photo.photoDescription}
-        onBlur={(e) => void updatePhotoDescription(photo.photoId, e.target.value.trim())}
+        value={description}
+        onChangeText={setDescription}
+        onBlur={() => void updatePhotoDescription(photo.photoId, description.trim())}
       />
     </figure>
   );
@@ -79,9 +86,7 @@ export function PhotoSection({ clientRecordId, ensurePersisted, onMessage, onCou
         hidden
         onChange={(e) => void onPicked(e.target.files)}
       />
-      <button type="button" className="btn" onClick={() => fileInputRef.current?.click()}>
-        Add photo
-      </button>
+      <Button onClick={() => fileInputRef.current?.click()}>Add photo</Button>
       <div className="photo-grid">
         {photos.map((p) => (
           <PhotoThumb key={p.photoId} photo={p} onRemove={() => void removePhoto(p.photoId)} />
