@@ -5,8 +5,8 @@
  * needs no animation library. Sizes bumped from the original's 16x16 to
  * fit this app's 48px-minimum touch target convention (PRD §9.5).
  */
+import { Check } from 'lucide-react';
 import { colors, minTouchTarget, radius, transition } from './theme';
-import { CheckIcon } from './icons';
 import { Text } from './Text';
 
 export interface CheckboxProps {
@@ -59,7 +59,7 @@ export function Checkbox({ label, checked, onChange, disabled = false, ...aria }
             color: '#04211d',
           }}
         >
-          <CheckIcon size={14} />
+          <Check size={14} />
         </span>
       </span>
       {label && <Text as="span">{label}</Text>}

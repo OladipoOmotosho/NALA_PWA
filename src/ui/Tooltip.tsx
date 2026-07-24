@@ -8,8 +8,8 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { Info } from 'lucide-react';
 import { colors, radius, spacing, zIndex } from './theme';
-import { InfoIcon } from './icons';
 
 export interface TooltipProps {
   message: string;
@@ -77,7 +77,7 @@ export function Tooltip({ message, title, children, ...aria }: TooltipProps) {
         onBlur={() => setVisible(false)}
         style={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer' }}
       >
-        {children ?? <InfoIcon size={16} color={colors.muted} />}
+        {children ?? <Info size={16} color={colors.muted} />}
       </span>
       {visible && position && tooltipStyle
         ? createPortal(

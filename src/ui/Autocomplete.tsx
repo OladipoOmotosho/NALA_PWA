@@ -19,7 +19,7 @@
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { colors, radius, transition, zIndex } from './theme';
-import { SearchIcon } from './icons';
+import { Search } from 'lucide-react';
 
 export interface AutocompleteProps {
   value: string;
@@ -101,7 +101,7 @@ export function Autocomplete({ value, onChangeText, suggestions, fieldLabel, pla
         </label>
       )}
       <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-        <SearchIcon size={14} color={colors.muted} style={{ position: 'absolute', left: 12 }} />
+        <Search size={14} color={colors.muted} style={{ position: 'absolute', left: 12 }} />
         <input
           id={inputId}
           type="text"

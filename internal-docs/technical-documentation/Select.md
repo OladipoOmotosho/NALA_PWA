@@ -29,8 +29,8 @@ primitives to strip. What changed:
 
 - `@retayl/hooks`' `useTheme()` + `@retayl/utils` tokens → this project's
   `theme.ts`.
-- `@retayl/icons` (`Pencil`/`SearchIcon`/`CloseIcon`) and `lucide-react`
-  (`ChevronDown`) → this library's own `icons.tsx`.
+- `@retayl/icons` (`Pencil`/`SearchIcon`/`CloseIcon`) → `lucide-react`
+  directly (`ChevronDown`/`Search`) — a real dependency of this project.
 - Dropped: backend/server search mode (`onSearch`/`isSearching`), the
   "add more options" and "header action" rows, per-item icon/image slots,
   and the configurable scrollbar-style prop — none of this app's dropdown
