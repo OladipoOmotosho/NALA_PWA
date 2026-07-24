@@ -165,9 +165,8 @@ export function CaptureScreen({ editRecordId, onDone }: Props) {
 
       <AssetSection
         form={form}
-        onTagChange={(v) => set('assetTag', v)}
+        set={set}
         onResolve={(v) => void resolveAsset(v)}
-        onSiteChange={(v) => set('siteCode', v)}
         onScan={() => setScanning(true)}
         onCopyForward={() => void copyForward()}
       />

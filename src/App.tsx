@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { SyncBanner } from './components/SyncBanner';
 import { UpdatePrompt } from './components/UpdatePrompt';
 import { CaptureScreen } from './screens/CaptureScreen';
-import { RecordsScreen } from './screens/RecordsScreen';
-import { DiagnosticsScreen } from './screens/DiagnosticsScreen';
-import { SettingsScreen } from './screens/SettingsScreen';
+import { RecordsHubScreen } from './screens/RecordsHubScreen';
 import { startEngine } from './sync/engine';
 import { requestPersistentStorage } from './db/storage';
 
-type Tab = 'capture' | 'records' | 'diagnostics' | 'settings';
+/** Two screens total (field-usability decision 2026-07-24): capture, and a
+ * records hub that folds in sync diagnostics + settings as collapsibles. */
+type Tab = 'capture' | 'records';
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('capture');
@@ -43,32 +43,20 @@ export default function App() {
           />
         )}
         {tab === 'records' && (
-          <RecordsScreen
+          <RecordsHubScreen
             onEdit={(id) => {
               setEditRecordId(id);
               setTab('capture');
             }}
           />
         )}
-        {tab === 'diagnostics' && <DiagnosticsScreen />}
-        {tab === 'settings' && <SettingsScreen />}
       </main>
       <nav className="tabbar">
         <button type="button" className={tab === 'capture' ? 'tab active' : 'tab'} onClick={newCapture}>
-          ➕ New
+          ➕ New Inspection
         </button>
         <button type="button" className={tab === 'records' ? 'tab active' : 'tab'} onClick={() => setTab('records')}>
           📋 Records
-        </button>
-        <button
-          type="button"
-          className={tab === 'diagnostics' ? 'tab active' : 'tab'}
-          onClick={() => setTab('diagnostics')}
-        >
-          🔧 Sync
-        </button>
-        <button type="button" className={tab === 'settings' ? 'tab active' : 'tab'} onClick={() => setTab('settings')}>
-          ⚙️ Setup
         </button>
       </nav>
     </div>
