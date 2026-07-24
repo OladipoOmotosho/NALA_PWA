@@ -30,8 +30,8 @@ be styled and reads jarringly against the rest of the dark-themed app.
 - Dropped the slide/scale animation-type switch — kept one fade+scale
   transition; the extra option wasn't worth the complexity for the small
   number of dialogs this app has.
-- `@retayl/icons` variant icons (`MarkedIcon`/`FailedIcon`/etc.) → this
-  library's own `icons.tsx` (`CheckIcon`/`CloseIcon`/`WarningIcon`/`InfoIcon`).
+- `@retayl/icons` variant icons (`MarkedIcon`/`FailedIcon`/etc.) →
+  `lucide-react` (`Check`/`X`/`AlertTriangle`/`Info`).
 - Kept: the variant system (auto icon + tint color), primary/secondary
   button configs (now backed by this library's own `Button`), escape-to-close,
   overlay-click-to-close, body-scroll lock, and portal rendering.

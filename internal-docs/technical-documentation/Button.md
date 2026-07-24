@@ -34,7 +34,7 @@ markup scattered across screens.
 | `size` | `'md' \| 'sm'` | `'md'` | `sm` (40px) drops below the 48px touch-target minimum — added during the app wiring for dense contexts (a per-record "Edit" in the Records list, the Sync Now button, secondary toggles like Field Reference). Reserve `md` for the primary action on any given screen. |
 | `loading` | `boolean` | `false` | Shows a spinner in place of the left icon; disables the button. |
 | `disabled` | `boolean` | `false` | |
-| `leftIcon` / `rightIcon` | `ReactNode` | — | Any icon element, e.g. from `ui/icons.tsx`. |
+| `leftIcon` / `rightIcon` | `ReactNode` | — | Any icon element, e.g. from `lucide-react`. |
 | `fullWidth` | `boolean` | `false` | Stretches to the container's width. |
 | ...rest | `ButtonHTMLAttributes<HTMLButtonElement>` | — | `onClick`, `type`, `aria-label`, etc. pass straight through. |
 

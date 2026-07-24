@@ -15,17 +15,17 @@
  *    the extra animation-type switch wasn't worth the complexity for four
  *    dialogs total in this app.
  *  - `@retayl/icons` variant icons (MarkedIcon/FailedIcon/etc.) →
- *    this library's own icons.tsx.
+ *    `lucide-react` (a real dependency of this project).
  * Kept: variant system (auto icon + tint), primary/secondary/button-array
  * button configs (reusing this library's own Button), escape-to-close,
  * overlay-click-to-close, body-scroll lock, and portal rendering.
  */
 import { useEffect, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { AlertTriangle, Check, Info, X } from 'lucide-react';
 import { colors, radius, spacing, zIndex } from './theme';
 import { Button, type ButtonVariant } from './Button';
 import { Text } from './Text';
-import { CheckIcon, CloseIcon, InfoIcon, WarningIcon } from './icons';
 
 export type ModalVariant = 'success' | 'error' | 'warning' | 'info' | 'confirmation' | 'custom';
 
@@ -54,11 +54,11 @@ export interface ModalProps {
 const SIZE_WIDTH: Record<NonNullable<ModalProps['size']>, number> = { sm: 360, md: 480, lg: 640 };
 
 const VARIANT_ICON: Partial<Record<ModalVariant, ReactNode>> = {
-  success: <CheckIcon size={22} color="#04211d" />,
-  error: <CloseIcon size={22} color="#fff" />,
-  warning: <WarningIcon size={22} color="#04211d" />,
-  confirmation: <WarningIcon size={22} color="#04211d" />,
-  info: <InfoIcon size={22} color="#fff" />,
+  success: <Check size={22} color="#04211d" />,
+  error: <X size={22} color="#fff" />,
+  warning: <AlertTriangle size={22} color="#04211d" />,
+  confirmation: <AlertTriangle size={22} color="#04211d" />,
+  info: <Info size={22} color="#fff" />,
 };
 
 const VARIANT_ICON_BG: Partial<Record<ModalVariant, string>> = {
@@ -176,7 +176,7 @@ export function Modal({
               cursor: 'pointer',
             }}
           >
-            <CloseIcon size={18} />
+            <X size={18} />
           </button>
         )}
         {icon && (

@@ -15,8 +15,8 @@
  *    how RetaylButton.tsx consumed them, simplified for our single platform.
  */
 import { type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { Loader2 } from 'lucide-react';
 import { colors, minTouchTarget, radius, transition } from './theme';
-import { SpinnerIcon } from './icons';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'danger';
 export type ButtonSize = 'md' | 'sm';
@@ -87,7 +87,7 @@ export function Button({
       }}
       {...rest}
     >
-      {loading ? <SpinnerIcon size={16} /> : leftIcon}
+      {loading ? <Loader2 size={16} className="ui-spin" /> : leftIcon}
       {children}
       {!loading ? rightIcon : null}
     </button>

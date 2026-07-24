@@ -2,12 +2,15 @@
  * Barrel export for the ui/ component library — tailored from Retayl's
  * component set for this project (see internal-docs/technical-documentation/
  * for per-component docs and components/redundant/MANIFEST.md for what
- * was left out and why).
+ * was left out and why). Wired into every screen; see App.tsx and friends.
  *
- * Import the shared keyframes once, at the app's entry point, alongside
- * this barrel: `import '../ui/ui.css'` (see main.tsx once these are wired in).
+ * Icons come straight from `lucide-react` (a real dependency) — imported
+ * directly at each call site, not re-exported here.
+ *
+ * Import the shared keyframes once, at the app's entry point:
+ * `import '../ui/ui.css'` (see main.tsx).
  */
-export { Button, type ButtonProps, type ButtonVariant } from './Button';
+export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from './Button';
 export { Text, type TextProps } from './Text';
 export { Checkbox, type CheckboxProps } from './Checkbox';
 export { Radio, type RadioProps } from './Radio';
@@ -19,5 +22,4 @@ export { Tooltip, type TooltipProps } from './Tooltip';
 export { Spinner, type SpinnerProps } from './Spinner';
 export { Autocomplete, type AutocompleteProps } from './Autocomplete';
 export { StatusBadge, type StatusBadgeProps } from './StatusBadge';
-export * as icons from './icons';
 export * as theme from './theme';

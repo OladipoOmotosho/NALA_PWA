@@ -10,8 +10,8 @@
  * styles — no react-native primitives to strip. What changed:
  *  - `@retayl/hooks` useTheme + `@retayl/utils` tokens → this project's
  *    theme.ts (CSS custom properties).
- *  - `@retayl/icons` (Pencil/SearchIcon/CloseIcon) and `lucide-react`
- *    (ChevronDown) → this library's own icons.tsx.
+ *  - `@retayl/icons` (Pencil/SearchIcon/CloseIcon) → `lucide-react`
+ *    directly (a real dependency of this project).
  *  - Dropped: backend-search mode (onSearch/isSearching), the "add more
  *    options" and "header action" rows, per-item icon/image slots, and
  *    the configurable scrollbar-style prop. None of this app's dropdown
@@ -33,8 +33,8 @@ import {
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { ChevronDown, Search } from 'lucide-react';
 import { colors, radius, transition, zIndex } from './theme';
-import { ChevronDownIcon, SearchIcon } from './icons';
 
 export interface SelectItem {
   label: string;
@@ -222,7 +222,7 @@ export function Select({
           {isLoading ? 'Loading…' : (selected?.label ?? placeholder)}
         </span>
         {!isLoading && (
-          <ChevronDownIcon
+          <ChevronDown
             size={16}
             color={colors.muted}
             style={{ transform: open ? 'rotate(180deg)' : undefined, transition: `transform ${transition.fast}` }}
@@ -238,7 +238,7 @@ export function Select({
         <DropdownPortal position={position} dropdownRef={dropdownRef}>
           {shouldShowSearch && (
             <div style={{ padding: 8, borderBottom: `1px solid ${colors.line}`, position: 'relative' }}>
-              <SearchIcon
+              <Search
                 size={14}
                 color={colors.muted}
                 style={{ position: 'absolute', left: 18, top: '50%', transform: 'translateY(-50%)' }}
